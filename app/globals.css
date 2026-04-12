@@ -137,6 +137,44 @@ select {
   animation: float-in 1100ms ease-out both;
 }
 
+.request-shell {
+  align-items: center;
+}
+
+.request-layout {
+  width: min(100%, 1180px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 520px);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
+}
+
+.request-copy {
+  display: grid;
+  gap: 20px;
+  max-width: 580px;
+  animation: rise-in 900ms ease-out both;
+}
+
+.request-copy h1 {
+  margin: 0;
+  font-family: var(--font-display), serif;
+  font-size: clamp(3.4rem, 8vw, 6rem);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.request-card {
+  animation: float-in 1000ms ease-out both;
+}
+
 .success-card,
 .request-form {
   animation: rise-in 700ms ease-out both;
@@ -207,10 +245,64 @@ select {
   color: rgba(244, 239, 227, 0.92);
 }
 
+.field-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.field-group legend {
+  padding: 0;
+  color: rgba(244, 239, 227, 0.92);
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .field span {
   font-size: 0.88rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.choice-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 14px 18px;
+  border: 1px solid rgba(215, 173, 98, 0.16);
+  border-radius: 999px;
+  background: rgba(12, 19, 31, 0.9);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.choice-pill input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.choice-pill span {
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+}
+
+.choice-pill:has(input:checked) {
+  border-color: rgba(215, 173, 98, 0.34);
+  background: rgba(32, 24, 10, 0.92);
+  box-shadow: 0 0 0 4px rgba(185, 138, 63, 0.08);
 }
 
 .field input {
@@ -244,10 +336,38 @@ select {
   letter-spacing: normal;
 }
 
+.guest-list {
+  display: grid;
+  gap: 16px;
+}
+
+.guest-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(215, 173, 98, 0.12);
+  border-radius: 20px;
+  background: rgba(8, 14, 23, 0.72);
+}
+
+.guest-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .secondary-button,
 .text-button {
   font: inherit;
   cursor: pointer;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .secondary-button {
@@ -653,6 +773,10 @@ select {
     grid-template-columns: 1fr;
     gap: 36px;
     padding: 24px 0 48px;
+  }
+
+  .request-layout {
+    grid-template-columns: 1fr;
   }
 
   .hero-copy {
