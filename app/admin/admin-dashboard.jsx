@@ -10,11 +10,24 @@ const statusLabels = {
   rejected: "Rejected"
 };
 
+const acceptanceMessage = `KELLER PARTY
+You have been selected.
+We look forward to welcoming you to the Icon Club Zurich on June 27.
+Please arrive promptly at 23:00.
+The dress code is Elegant and will be strictly enforced.
+Photography and filming are prohibited throughout the evening.
+This is a private event. Your invitation is personal and non-transferable.`;
+
 function formatDate(timestamp) {
   return new Intl.DateTimeFormat("en-CH", {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(timestamp));
+}
+
+function getWhatsAppUrl(phoneNumber, message) {
+  const normalizedPhoneNumber = phoneNumber.replace(/[^\d]/g, "");
+  return `https://wa.me/${normalizedPhoneNumber}?text=${encodeURIComponent(message)}`;
 }
 
 export default function AdminDashboard({ initialRegistrations }) {
@@ -136,6 +149,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                   <th scope="col">Submitted</th>
                   <th scope="col">Status</th>
                   <th scope="col">Actions</th>
+                  <th scope="col">WhatsApp</th>
                 </tr>
               </thead>
               <tbody>
@@ -197,6 +211,23 @@ export default function AdminDashboard({ initialRegistrations }) {
                             Reject
                           </button>
                         </div>
+                      </td>
+                      <td>
+                        {registration.status === "accepted" ? (
+                          <a
+                            className="compact-button button-link"
+                            href={getWhatsAppUrl(
+                              registration.phoneNumber,
+                              acceptanceMessage
+                            )}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Message
+                          </a>
+                        ) : (
+                          <span className="muted-table-text">Accept first</span>
+                        )}
                       </td>
                     </tr>
                   );
