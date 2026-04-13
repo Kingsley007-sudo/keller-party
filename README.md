@@ -22,6 +22,7 @@ Next.js foundation for the Keller Party invitation experience.
 - Admin search, status filters, CSV export, and manual WhatsApp action
 - Duplicate protection by phone number and Instagram name
 - Privacy notice on registration submission
+- Basic rate limiting on public registration submissions
 
 ## Next implementation steps
 - Deploy to Vercel or another persistent Node hosting target
