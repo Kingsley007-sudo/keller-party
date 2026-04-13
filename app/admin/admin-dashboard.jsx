@@ -324,7 +324,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                             <div className="table-actions">
                               <button
                                 type="button"
-                                className="compact-button"
+                                className="compact-button compact-button-accept"
                                 disabled={activeId === registration.id}
                                 onClick={() => handleStatusChange(registration.id, "accepted")}
                               >
@@ -332,7 +332,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                               </button>
                               <button
                                 type="button"
-                                className="compact-button"
+                                className="compact-button compact-button-reject"
                                 disabled={activeId === registration.id}
                                 onClick={() => handleStatusChange(registration.id, "rejected")}
                               >
@@ -343,7 +343,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                           <td>
                             {registration.status === "accepted" ? (
                               <a
-                                className="compact-button button-link"
+                                className="compact-button compact-button-message button-link"
                                 href={getWhatsAppUrl(
                                   registration.phoneNumber,
                                   acceptanceMessage
