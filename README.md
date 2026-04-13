@@ -19,12 +19,15 @@ Next.js foundation for the Keller Party invitation experience.
 - Request-access form with persisted submissions
 - Password-gated admin review page
 - Supabase database storage for registrations
+- Admin search, status filters, CSV export, and manual WhatsApp action
+- Duplicate protection by phone number and Instagram name
+- Privacy notice on registration submission
 
 ## Next implementation steps
-- Configure `ADMIN_PASSWORD` before deployment
-- Create the Supabase `registrations` table using `supabase/schema.sql`
-- Search and filter controls in the admin area
-- Manual WhatsApp action/link for accepted guests
+- Deploy to Vercel or another persistent Node hosting target
+- Add production environment variables to the hosting provider
+- Test production registration, admin login, status update, WhatsApp link, and CSV export
+- Add a fuller privacy/legal page if the event link will be shared broadly
 
 ## Environment
 - `ADMIN_PASSWORD`: admin login password. Defaults to `keller-party-admin` in local development if unset.
@@ -39,3 +42,11 @@ Next.js foundation for the Keller Party invitation experience.
 4. Add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_PASSWORD`, and `SESSION_SECRET` to `.env.local`.
 5. Run `npm run check:supabase`.
 6. Restart the app server.
+
+## Deployment checklist
+1. Push the latest `dev` branch to GitHub.
+2. Connect the repository to Vercel.
+3. Add `ADMIN_PASSWORD`, `SESSION_SECRET`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY` in Vercel environment variables.
+4. Run `supabase/schema.sql` in the production Supabase project after every schema change.
+5. Deploy and test `/request-access` and `/admin`.
+6. Download a CSV export and keep it outside the repository.
