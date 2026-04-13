@@ -38,7 +38,8 @@ loadLocalEnv();
 const requiredVariables = [
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
-  "ADMIN_PASSWORD"
+  "ADMIN_PASSWORD",
+  "SESSION_SECRET"
 ];
 
 const missingVariables = requiredVariables.filter(

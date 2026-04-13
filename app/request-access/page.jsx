@@ -425,6 +425,12 @@ export default function RequestAccessPage() {
                 <p className="field-error form-error-banner">{submissionError}</p>
               ) : null}
 
+              <p className="privacy-note">
+                By submitting this request, you agree that Keller Party may store
+                your registration details and use your phone number or Instagram
+                name to review access and contact you about this private event.
+              </p>
+
               <button type="submit" className="primary-button" disabled={isSubmitting}>
                 {isSubmitting ? "Submitting..." : "Submit request"}
               </button>

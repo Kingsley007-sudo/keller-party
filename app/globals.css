@@ -358,6 +358,13 @@ select {
   margin: 0;
 }
 
+.privacy-note {
+  margin: 0;
+  color: rgba(228, 235, 244, 0.58);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 .guest-list {
   display: grid;
   gap: 16px;
