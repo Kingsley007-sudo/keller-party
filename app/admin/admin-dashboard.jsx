@@ -30,6 +30,27 @@ function getWhatsAppUrl(phoneNumber, message) {
   return `https://wa.me/${normalizedPhoneNumber}?text=${encodeURIComponent(message)}`;
 }
 
+function escapeCsvCell(value) {
+  const cellValue = value == null ? "" : String(value);
+  return `"${cellValue.replaceAll("\"", "\"\"")}"`;
+}
+
+function downloadCsv(filename, rows) {
+  const csvContent = rows
+    .map((row) => row.map(escapeCsvCell).join(","))
+    .join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 export default function AdminDashboard({ initialRegistrations }) {
   const router = useRouter();
   const [registrations, setRegistrations] = useState(initialRegistrations);
@@ -110,6 +131,38 @@ export default function AdminDashboard({ initialRegistrations }) {
       )
     );
     setActiveId("");
+  }
+
+  function handleExportCsv() {
+    const rows = [
+      [
+        "Full name",
+        "Phone number",
+        "Date of birth",
+        "Instagram",
+        "Status",
+        "Bringing guests",
+        "Guests",
+        "Submitted",
+        "Updated"
+      ],
+      ...visibleRegistrations.map((registration) => [
+        registration.fullName,
+        registration.phoneNumber,
+        registration.dateOfBirth,
+        registration.instagramName,
+        statusLabels[registration.status],
+        registration.bringingGuests,
+        registration.guests
+          .map((guest) => `${guest.fullName} (${guest.instagramName})`)
+          .join("; "),
+        registration.createdAt,
+        registration.updatedAt
+      ])
+    ];
+
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadCsv(`keller-party-registrations-${dateStamp}.csv`, rows);
   }
 
   return (
@@ -195,6 +248,15 @@ export default function AdminDashboard({ initialRegistrations }) {
             <p className="admin-filter-count">
               {visibleRegistrations.length} shown
             </p>
+
+            <button
+              type="button"
+              className="compact-button admin-export-button"
+              disabled={visibleRegistrations.length === 0}
+              onClick={handleExportCsv}
+            >
+              Export CSV
+            </button>
           </div>
 
           {visibleRegistrations.length === 0 ? (
