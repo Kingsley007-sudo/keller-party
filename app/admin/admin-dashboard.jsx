@@ -37,6 +37,8 @@ export default function AdminDashboard({ initialRegistrations }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [requestError, setRequestError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const totalPrimaryGuests = registrations.length;
   const totalAdditionalGuests = registrations.reduce(
     (total, registration) => total + registration.guests.length,
@@ -46,6 +48,34 @@ export default function AdminDashboard({ initialRegistrations }) {
   const pendingCount = registrations.filter(
     (registration) => registration.status === "pending"
   ).length;
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const visibleRegistrations = registrations.filter((registration) => {
+    const matchesStatus =
+      statusFilter === "all" || registration.status === statusFilter;
+
+    if (!matchesStatus) {
+      return false;
+    }
+
+    if (!normalizedSearchQuery) {
+      return true;
+    }
+
+    const searchableText = [
+      registration.fullName,
+      registration.phoneNumber,
+      registration.instagramName,
+      registration.dateOfBirth,
+      ...registration.guests.flatMap((guest) => [
+        guest.fullName,
+        guest.instagramName
+      ])
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(normalizedSearchQuery);
+  });
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -137,104 +167,142 @@ export default function AdminDashboard({ initialRegistrations }) {
           <h3>Requests will appear here after the first form submission.</h3>
         </div>
       ) : (
-        <div className="admin-table-card">
-          <div className="admin-table-scroll">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th scope="col">Guest</th>
-                  <th scope="col">Contact</th>
-                  <th scope="col">Birth date</th>
-                  <th scope="col">Guests</th>
-                  <th scope="col">Submitted</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Actions</th>
-                  <th scope="col">WhatsApp</th>
-                </tr>
-              </thead>
-              <tbody>
-                {registrations.map((registration) => {
-                  const guestCount = registration.guests.length;
+        <div className="admin-table-stack">
+          <div className="admin-filter-bar">
+            <label className="admin-search-field">
+              <span>Search registrations</span>
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Name, phone, Instagram..."
+              />
+            </label>
 
-                  return (
-                    <tr key={registration.id}>
-                      <td>
-                        <div className="table-primary-cell">
-                          <strong>{registration.fullName}</strong>
-                          <span>{registration.instagramName}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <a href={`tel:${registration.phoneNumber}`}>
-                          {registration.phoneNumber}
-                        </a>
-                      </td>
-                      <td>{registration.dateOfBirth}</td>
-                      <td>
-                        {guestCount > 0 ? (
-                          <details className="guest-details">
-                            <summary>{guestCount} guest{guestCount === 1 ? "" : "s"}</summary>
-                            <ul>
-                              {registration.guests.map((guest) => (
-                                <li key={`${registration.id}-${guest.fullName}-${guest.instagramName}`}>
-                                  {guest.fullName} <span>{guest.instagramName}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </details>
-                        ) : (
-                          <span className="muted-table-text">None</span>
-                        )}
-                      </td>
-                      <td>{formatDate(registration.createdAt)}</td>
-                      <td>
-                        <span className={`status-badge status-${registration.status}`}>
-                          {statusLabels[registration.status]}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="table-actions">
-                          <button
-                            type="button"
-                            className="compact-button"
-                            disabled={activeId === registration.id}
-                            onClick={() => handleStatusChange(registration.id, "accepted")}
-                          >
-                            Accept
-                          </button>
-                          <button
-                            type="button"
-                            className="compact-button"
-                            disabled={activeId === registration.id}
-                            onClick={() => handleStatusChange(registration.id, "rejected")}
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        {registration.status === "accepted" ? (
-                          <a
-                            className="compact-button button-link"
-                            href={getWhatsAppUrl(
-                              registration.phoneNumber,
-                              acceptanceMessage
-                            )}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Message
-                          </a>
-                        ) : (
-                          <span className="muted-table-text">Accept first</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <label className="admin-status-filter">
+              <span>Status</span>
+              <select
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </label>
+
+            <p className="admin-filter-count">
+              {visibleRegistrations.length} shown
+            </p>
           </div>
+
+          {visibleRegistrations.length === 0 ? (
+            <div className="admin-empty-state compact-empty-state">
+              <p className="flow-label">No matching registrations</p>
+              <h3>Adjust search or status filters.</h3>
+            </div>
+          ) : (
+            <div className="admin-table-card">
+              <div className="admin-table-scroll">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Guest</th>
+                      <th scope="col">Contact</th>
+                      <th scope="col">Birth date</th>
+                      <th scope="col">Guests</th>
+                      <th scope="col">Submitted</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                      <th scope="col">WhatsApp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleRegistrations.map((registration) => {
+                      const guestCount = registration.guests.length;
+
+                      return (
+                        <tr key={registration.id}>
+                          <td>
+                            <div className="table-primary-cell">
+                              <strong>{registration.fullName}</strong>
+                              <span>{registration.instagramName}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <a href={`tel:${registration.phoneNumber}`}>
+                              {registration.phoneNumber}
+                            </a>
+                          </td>
+                          <td>{registration.dateOfBirth}</td>
+                          <td>
+                            {guestCount > 0 ? (
+                              <details className="guest-details">
+                                <summary>{guestCount} guest{guestCount === 1 ? "" : "s"}</summary>
+                                <ul>
+                                  {registration.guests.map((guest) => (
+                                    <li key={`${registration.id}-${guest.fullName}-${guest.instagramName}`}>
+                                      {guest.fullName} <span>{guest.instagramName}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </details>
+                            ) : (
+                              <span className="muted-table-text">None</span>
+                            )}
+                          </td>
+                          <td>{formatDate(registration.createdAt)}</td>
+                          <td>
+                            <span className={`status-badge status-${registration.status}`}>
+                              {statusLabels[registration.status]}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="table-actions">
+                              <button
+                                type="button"
+                                className="compact-button"
+                                disabled={activeId === registration.id}
+                                onClick={() => handleStatusChange(registration.id, "accepted")}
+                              >
+                                Accept
+                              </button>
+                              <button
+                                type="button"
+                                className="compact-button"
+                                disabled={activeId === registration.id}
+                                onClick={() => handleStatusChange(registration.id, "rejected")}
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                          <td>
+                            {registration.status === "accepted" ? (
+                              <a
+                                className="compact-button button-link"
+                                href={getWhatsAppUrl(
+                                  registration.phoneNumber,
+                                  acceptanceMessage
+                                )}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                Message
+                              </a>
+                            ) : (
+                              <span className="muted-table-text">Accept first</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

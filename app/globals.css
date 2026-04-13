@@ -950,6 +950,60 @@ select {
   overflow: hidden;
 }
 
+.admin-table-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-filter-bar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(160px, 220px) auto;
+  gap: 14px;
+  align-items: end;
+  border: 1px solid rgba(215, 173, 98, 0.14);
+  border-radius: 24px;
+  padding: 16px;
+  background: rgba(7, 12, 20, 0.72);
+  backdrop-filter: blur(16px);
+}
+
+.admin-search-field,
+.admin-status-filter {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-search-field span,
+.admin-status-filter span,
+.admin-filter-count {
+  color: rgba(234, 216, 176, 0.84);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.admin-search-field input,
+.admin-status-filter select {
+  width: 100%;
+  border: 1px solid rgba(215, 173, 98, 0.16);
+  border-radius: 16px;
+  padding: 12px 14px;
+  color: var(--text-main);
+  background: rgba(12, 19, 31, 0.9);
+  outline: none;
+}
+
+.admin-filter-count {
+  margin: 0;
+  padding: 12px 0;
+  color: rgba(228, 235, 244, 0.7);
+}
+
+.compact-empty-state {
+  padding: 20px;
+}
+
 .admin-table-scroll {
   overflow-x: auto;
 }
@@ -1210,6 +1264,10 @@ select {
   }
 
   .admin-entry-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-filter-bar {
     grid-template-columns: 1fr;
   }
 }
