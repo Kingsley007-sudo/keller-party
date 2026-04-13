@@ -429,6 +429,8 @@ export default function RequestAccessPage() {
                 By submitting this request, you agree that Keller Party may store
                 your registration details and use your phone number or Instagram
                 name to review access and contact you about this private event.
+                {" "}
+                <Link href="/privacy">Read the privacy notice.</Link>
               </p>
 
               <button type="submit" className="primary-button" disabled={isSubmitting}>

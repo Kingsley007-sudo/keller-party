@@ -365,6 +365,44 @@ select {
   line-height: 1.55;
 }
 
+.privacy-note a {
+  color: var(--gold-300);
+  text-decoration: none;
+}
+
+.privacy-layout {
+  width: min(100%, 1080px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1fr);
+  gap: clamp(32px, 6vw, 72px);
+  align-items: start;
+}
+
+.privacy-card {
+  display: grid;
+  gap: 20px;
+  border: 1px solid rgba(215, 173, 98, 0.14);
+  border-radius: 28px;
+  padding: 26px;
+  background:
+    linear-gradient(180deg, rgba(11, 18, 29, 0.94), rgba(4, 8, 14, 0.9)),
+    radial-gradient(circle at top left, rgba(29, 74, 142, 0.18), transparent 35%);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+}
+
+.privacy-section {
+  display: grid;
+  gap: 8px;
+}
+
+.privacy-section p {
+  margin: 0;
+  color: rgba(228, 235, 244, 0.74);
+}
+
 .guest-list {
   display: grid;
   gap: 16px;
@@ -1237,6 +1275,10 @@ select {
   }
 
   .request-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .privacy-layout {
     grid-template-columns: 1fr;
   }
 
