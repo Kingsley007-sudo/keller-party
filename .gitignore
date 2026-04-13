@@ -5,3 +5,6 @@ dist
 .next-dev.err.log
 .DS_Store
 *.local
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal

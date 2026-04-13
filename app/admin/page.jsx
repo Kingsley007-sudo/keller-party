@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import AdminDashboard from "./admin-dashboard";
@@ -28,21 +27,13 @@ export default async function AdminPage() {
       <div className="ambient ambient-right" />
       <div className="grid-glow" />
 
-      <section className="admin-layout">
-        <div className="request-copy">
+      <section className="admin-page">
+        <div className="request-copy admin-heading">
           <p className="eyebrow">Internal area</p>
           <h1>Guest review.</h1>
           <p className="hero-description">
             This internal view shows every access request and keeps the current status in sync.
           </p>
-          <div className="request-actions">
-            <Link href="/" className="secondary-button button-link">
-              Back to invite
-            </Link>
-            <Link href="/request-access" className="secondary-button button-link">
-              Open request form
-            </Link>
-          </div>
         </div>
 
         <AdminDashboard initialRegistrations={registrations} />

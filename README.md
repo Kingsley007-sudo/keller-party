@@ -14,9 +14,15 @@ Next.js foundation for the Keller Party invitation experience.
 - App entry files
 - Base landing page shell
 - Discover documentation in `__Discover__/`
+- Request-access form with persisted submissions
+- Password-gated admin review page
+- Local SQLite database storage in `data/keller-party.sqlite`
 
 ## Next implementation steps
-- Envelope and card animation
-- Registration form flow
-- Admin dashboard
-- Backend and data persistence
+- Configure `ADMIN_PASSWORD` before deployment
+- Search and filter controls in the admin area
+- Manual WhatsApp action/link for accepted guests
+- Hosted database for production deployment
+
+## Environment
+- `ADMIN_PASSWORD`: admin login password. Defaults to `keller-party-admin` in local development if unset.

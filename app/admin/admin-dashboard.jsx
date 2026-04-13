@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,7 +22,17 @@ export default function AdminDashboard({ initialRegistrations }) {
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [activeId, setActiveId] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [requestError, setRequestError] = useState("");
+  const totalPrimaryGuests = registrations.length;
+  const totalAdditionalGuests = registrations.reduce(
+    (total, registration) => total + registration.guests.length,
+    0
+  );
+  const totalGuests = totalPrimaryGuests + totalAdditionalGuests;
+  const pendingCount = registrations.filter(
+    (registration) => registration.status === "pending"
+  ).length;
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -60,27 +71,50 @@ export default function AdminDashboard({ initialRegistrations }) {
 
   return (
     <div className="admin-dashboard">
-      <div className="admin-summary-card">
-        <p className="flow-label">Admin</p>
-        <h2>Registrations</h2>
-        <p className="hero-description">
-          Review every request, then mark each guest as accepted or rejected.
-        </p>
-        <div className="hero-meta">
-          <span>{registrations.length} total</span>
-          <span>
-            {registrations.filter((registration) => registration.status === "pending").length} pending
-          </span>
-        </div>
+      <nav className="admin-floating-menu" aria-label="Admin navigation">
         <button
           type="button"
-          className="secondary-button"
-          disabled={isLoggingOut}
-          onClick={handleLogout}
+          className="admin-menu-trigger"
+          aria-expanded={isMenuOpen}
+          aria-controls="admin-menu-popover"
+          onClick={() => setIsMenuOpen((current) => !current)}
         >
-          {isLoggingOut ? "Signing out..." : "Sign out"}
+          Menu
+          <span aria-hidden="true">{isMenuOpen ? "Close" : "Open"}</span>
         </button>
-      </div>
+
+        {isMenuOpen ? (
+          <div id="admin-menu-popover" className="admin-menu-popover">
+            <Link href="/" className="admin-menu-item">
+              Back to invite
+            </Link>
+            <Link href="/request-access" className="admin-menu-item">
+              Open request form
+            </Link>
+            <button
+              type="button"
+              className="admin-menu-item"
+              disabled={isLoggingOut}
+              onClick={handleLogout}
+            >
+              {isLoggingOut ? "Signing out..." : "Sign out"}
+            </button>
+          </div>
+        ) : null}
+      </nav>
+
+      <header className="admin-menu">
+        <div className="admin-menu-title">
+          <p className="flow-label">Registration admin</p>
+          <strong>{totalGuests} total guest{totalGuests === 1 ? "" : "s"}</strong>
+        </div>
+
+        <div className="admin-menu-stats">
+          <span>{totalPrimaryGuests} registrations</span>
+          <span>{totalAdditionalGuests} additional guests</span>
+          <span>{pendingCount} pending</span>
+        </div>
+      </header>
 
       {requestError ? <p className="field-error">{requestError}</p> : null}
 
@@ -90,83 +124,86 @@ export default function AdminDashboard({ initialRegistrations }) {
           <h3>Requests will appear here after the first form submission.</h3>
         </div>
       ) : (
-        <div className="admin-list">
-          {registrations.map((registration) => {
-            const guestCount = registration.guests.length;
+        <div className="admin-table-card">
+          <div className="admin-table-scroll">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Guest</th>
+                  <th scope="col">Contact</th>
+                  <th scope="col">Birth date</th>
+                  <th scope="col">Guests</th>
+                  <th scope="col">Submitted</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {registrations.map((registration) => {
+                  const guestCount = registration.guests.length;
 
-            return (
-              <article key={registration.id} className="admin-entry-card">
-                <div className="admin-entry-topline">
-                  <div>
-                    <p className="flow-label">{statusLabels[registration.status]}</p>
-                    <h3>{registration.fullName}</h3>
-                  </div>
-                  <span className={`status-badge status-${registration.status}`}>
-                    {statusLabels[registration.status]}
-                  </span>
-                </div>
-
-                <div className="admin-entry-grid">
-                  <div>
-                    <p className="admin-meta-label">Phone</p>
-                    <p>{registration.phoneNumber}</p>
-                  </div>
-                  <div>
-                    <p className="admin-meta-label">Instagram</p>
-                    <p>{registration.instagramName}</p>
-                  </div>
-                  <div>
-                    <p className="admin-meta-label">Date of birth</p>
-                    <p>{registration.dateOfBirth}</p>
-                  </div>
-                  <div>
-                    <p className="admin-meta-label">Submitted</p>
-                    <p>{formatDate(registration.createdAt)}</p>
-                  </div>
-                  <div>
-                    <p className="admin-meta-label">Guests</p>
-                    <p>{guestCount > 0 ? `${guestCount} attached` : "No guests"}</p>
-                  </div>
-                  <div>
-                    <p className="admin-meta-label">Updated</p>
-                    <p>{formatDate(registration.updatedAt)}</p>
-                  </div>
-                </div>
-
-                {guestCount > 0 ? (
-                  <div className="admin-guests">
-                    <p className="admin-meta-label">Guest list</p>
-                    <ul className="details-list admin-guest-list">
-                      {registration.guests.map((guest) => (
-                        <li key={`${registration.id}-${guest.fullName}-${guest.instagramName}`}>
-                          {guest.fullName} · {guest.instagramName}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-
-                <div className="admin-actions">
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={activeId === registration.id}
-                    onClick={() => handleStatusChange(registration.id, "accepted")}
-                  >
-                    Accept
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={activeId === registration.id}
-                    onClick={() => handleStatusChange(registration.id, "rejected")}
-                  >
-                    Reject
-                  </button>
-                </div>
-              </article>
-            );
-          })}
+                  return (
+                    <tr key={registration.id}>
+                      <td>
+                        <div className="table-primary-cell">
+                          <strong>{registration.fullName}</strong>
+                          <span>{registration.instagramName}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <a href={`tel:${registration.phoneNumber}`}>
+                          {registration.phoneNumber}
+                        </a>
+                      </td>
+                      <td>{registration.dateOfBirth}</td>
+                      <td>
+                        {guestCount > 0 ? (
+                          <details className="guest-details">
+                            <summary>{guestCount} guest{guestCount === 1 ? "" : "s"}</summary>
+                            <ul>
+                              {registration.guests.map((guest) => (
+                                <li key={`${registration.id}-${guest.fullName}-${guest.instagramName}`}>
+                                  {guest.fullName} <span>{guest.instagramName}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </details>
+                        ) : (
+                          <span className="muted-table-text">None</span>
+                        )}
+                      </td>
+                      <td>{formatDate(registration.createdAt)}</td>
+                      <td>
+                        <span className={`status-badge status-${registration.status}`}>
+                          {statusLabels[registration.status]}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="table-actions">
+                          <button
+                            type="button"
+                            className="compact-button"
+                            disabled={activeId === registration.id}
+                            onClick={() => handleStatusChange(registration.id, "accepted")}
+                          >
+                            Accept
+                          </button>
+                          <button
+                            type="button"
+                            className="compact-button"
+                            disabled={activeId === registration.id}
+                            onClick={() => handleStatusChange(registration.id, "rejected")}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
