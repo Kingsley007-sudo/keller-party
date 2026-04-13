@@ -69,4 +69,15 @@ if (error) {
   throw new Error(`Supabase check failed: ${error.message}`);
 }
 
+const { error: schemaError } = await supabase
+  .from("registrations")
+  .select("phone_number_normalized, instagram_name_normalized", { head: true })
+  .limit(1);
+
+if (schemaError) {
+  throw new Error(
+    `Supabase schema check failed: ${schemaError.message}. Re-run supabase/schema.sql.`
+  );
+}
+
 console.log(`Supabase connection OK. registrations rows: ${count ?? 0}`);
