@@ -3,8 +3,8 @@ dist
 .next
 .next-dev.out.log
 .next-dev.err.log
+.next-start.out.log
+.next-start.err.log
 .DS_Store
 *.local
-data/*.sqlite
-data/*.sqlite-shm
-data/*.sqlite-wal
+data/
