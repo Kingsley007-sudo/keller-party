@@ -14,8 +14,10 @@ const initialForm = {
 
 export default function RequestAccessPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(initialForm);
+  const [submissionError, setSubmissionError] = useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -175,6 +177,11 @@ export default function RequestAccessPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
+    void submitForm();
+  }
+
+  async function submitForm() {
+    setSubmissionError("");
 
     const nextErrors = validateForm();
 
@@ -183,10 +190,31 @@ export default function RequestAccessPage() {
       return;
     }
 
+    setIsSubmitting(true);
+
+    const response = await fetch("/api/registrations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      setIsSubmitting(false);
+      setErrors(payload.errors || {});
+      setSubmissionError("Your request could not be submitted. Please review the form and try again.");
+      return;
+    }
+
     startTransition(() => {
       setErrors({});
+      setSubmissionError("");
       setIsSubmitted(true);
       setFormData(initialForm);
+      setIsSubmitting(false);
     });
   }
 
@@ -194,6 +222,7 @@ export default function RequestAccessPage() {
     setErrors({});
     setIsSubmitted(false);
     setFormData(initialForm);
+    setSubmissionError("");
   }
 
   return (
@@ -392,8 +421,12 @@ export default function RequestAccessPage() {
                 </div>
               ) : null}
 
-              <button type="submit" className="primary-button">
-                Submit request
+              {submissionError ? (
+                <p className="field-error form-error-banner">{submissionError}</p>
+              ) : null}
+
+              <button type="submit" className="primary-button" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Submit request"}
               </button>
             </form>
           )}
