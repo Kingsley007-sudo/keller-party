@@ -132,7 +132,12 @@ select {
 
 .home-hero .hero-meta {
   justify-content: center;
-  margin-top: -18px;
+  margin-top: 0;
+}
+
+.hero-meta-kicker {
+  margin-top: -4px;
+  margin-bottom: 0;
 }
 
 .hero-meta span,
@@ -156,7 +161,6 @@ select {
   place-items: center;
   width: 100%;
   perspective: 1400px;
-  animation: float-in 1100ms ease-out both;
 }
 
 .request-shell {
@@ -549,6 +553,7 @@ select {
   display: grid;
   place-items: center;
   transform-style: preserve-3d;
+  isolation: isolate;
 }
 
 .envelope-back,
@@ -571,7 +576,6 @@ select {
   box-shadow:
     0 32px 90px rgba(0, 0, 0, 0.58),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  animation: envelope-clear 620ms 5000ms ease both;
 }
 
 .envelope-flap {
@@ -583,9 +587,6 @@ select {
     linear-gradient(160deg, rgba(27, 58, 102, 0.98), rgba(8, 17, 30, 0.98) 58%, rgba(182, 132, 52, 0.16)),
     linear-gradient(90deg, rgba(215, 173, 98, 0.18), transparent 32%, rgba(215, 173, 98, 0.12));
   transform-origin: top center;
-  animation:
-    envelope-flap-open 1200ms 260ms cubic-bezier(0.2, 0.74, 0.2, 1) both,
-    envelope-clear 620ms 5000ms ease both;
   filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.34));
 }
 
@@ -597,13 +598,12 @@ select {
   border-radius: 18px;
   overflow: hidden;
   background:
-    linear-gradient(38deg, rgba(8, 16, 28, 0.98) 0 49.6%, transparent 50%),
-    linear-gradient(-38deg, rgba(10, 22, 38, 0.98) 0 49.6%, transparent 50%),
-    linear-gradient(180deg, transparent 0 34%, rgba(5, 10, 18, 0.98) 34% 100%);
+    linear-gradient(38deg, rgba(8, 16, 28, 0.98) 0 49.6%, rgba(6, 12, 21, 0.98) 50%),
+    linear-gradient(-38deg, rgba(10, 22, 38, 0.98) 0 49.6%, rgba(6, 12, 21, 0.98) 50%),
+    linear-gradient(180deg, rgba(7, 14, 24, 0.98) 0 34%, rgba(5, 10, 18, 0.98) 34% 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     inset 0 -20px 40px rgba(0, 0, 0, 0.24);
-  animation: envelope-clear 620ms 5000ms ease both;
 }
 
 .envelope-pocket::before {
@@ -618,7 +618,7 @@ select {
 
 .card-frame {
   position: relative;
-  z-index: 5;
+  z-index: 2;
   width: min(100%, 460px);
   padding: 18px;
   border: 1px solid rgba(215, 173, 98, 0.16);
@@ -631,15 +631,14 @@ select {
     0 30px 90px rgba(0, 0, 0, 0.62),
     0 0 0 1px rgba(16, 34, 63, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transform: rotate(0deg);
-  animation:
-    envelope-card-rise 900ms 5650ms cubic-bezier(0.2, 0.74, 0.2, 1) both,
-    card-sway 8s 6650ms ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(260px) scale(0.42);
   transition:
     transform 260ms ease,
     box-shadow 260ms ease,
     border-color 260ms ease,
     filter 260ms ease;
+  will-change: transform;
 }
 
 .card-frame::before {
@@ -701,12 +700,14 @@ select {
 .card-topline {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
+  text-align: center;
 }
 
 .event-label,
-.location {
+.location,
+.card-subtitle {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -715,6 +716,11 @@ select {
 
 .event-label {
   color: var(--gold-300);
+}
+
+.card-subtitle {
+  margin-top: 10px;
+  color: var(--gold-400);
 }
 
 .invite-card h2 {
@@ -1370,51 +1376,6 @@ select {
   }
 }
 
-@keyframes envelope-flap-open {
-  0% {
-    transform: rotateX(0deg);
-  }
-  45% {
-    transform: rotateX(0deg);
-  }
-  100% {
-    transform: rotateX(176deg);
-  }
-}
-
-@keyframes envelope-card-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(34px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes envelope-clear {
-  0%,
-  45% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(34px) scale(0.96);
-  }
-}
-
-@keyframes card-sway {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 @keyframes drift {
   0%,
   100% {
@@ -1499,13 +1460,6 @@ select {
     height: 200px;
   }
 
-  .card-frame {
-    transform: rotate(0deg);
-    animation:
-      mobile-envelope-card-rise 900ms 5650ms cubic-bezier(0.2, 0.74, 0.2, 1) both,
-      mobile-float 7s 6650ms ease-in-out infinite;
-  }
-
   .form-header {
     flex-direction: column;
   }
@@ -1516,27 +1470,6 @@ select {
 
   .admin-filter-bar {
     grid-template-columns: 1fr;
-  }
-}
-
-@keyframes mobile-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes mobile-envelope-card-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
@@ -1553,8 +1486,4 @@ select {
     transform: rotateX(176deg);
   }
 
-  .card-frame {
-    opacity: 1;
-    transform: rotate(0deg);
-  }
 }
