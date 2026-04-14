@@ -47,19 +47,19 @@ export default function InvitationEnvelope() {
           ease: easeOut
         },
         opacity: {
-          delay: shouldReduceMotion ? 0 : 4.1,
+          delay: shouldReduceMotion ? 0 : 5.15,
           duration: shouldReduceMotion ? 0 : 0.8,
           times: [0, 0.2, 1],
           ease: easeOut
         },
         y: {
-          delay: shouldReduceMotion ? 0 : 4.1,
+          delay: shouldReduceMotion ? 0 : 5.15,
           duration: shouldReduceMotion ? 0 : 0.8,
           times: [0, 0.2, 1],
           ease: easeOut
         },
         scale: {
-          delay: shouldReduceMotion ? 0 : 4.1,
+          delay: shouldReduceMotion ? 0 : 5.15,
           duration: shouldReduceMotion ? 0 : 0.8,
           times: [0, 0.2, 1],
           ease: easeOut
@@ -77,7 +77,7 @@ export default function InvitationEnvelope() {
       y: shouldReduceMotion ? 34 : [0, 0, 34],
       scale: shouldReduceMotion ? 0.92 : [1, 1, 0.92],
       transition: {
-        delay: shouldReduceMotion ? 0 : 4.1,
+        delay: shouldReduceMotion ? 0 : 5.15,
         duration: shouldReduceMotion ? 0 : 0.8,
         times: [0, 0.35, 1],
         ease: easeOut
@@ -85,34 +85,47 @@ export default function InvitationEnvelope() {
     }
   };
 
+  const cardMaskVariants = {
+    hidden: shouldReduceMotion
+      ? { clipPath: "inset(0px 0px 0px 0px)" }
+      : { clipPath: "inset(0px 0px 384px 0px)" },
+    show: {
+      clipPath: shouldReduceMotion
+        ? "inset(0px 0px 0px 0px)"
+        : "inset(0px 0px 0px 0px)",
+      transition: {
+        delay: shouldReduceMotion ? 0 : 5.25,
+        duration: shouldReduceMotion ? 0 : 0.7,
+        ease: easeOut
+      }
+    }
+  };
+
   const cardVariants = {
     hidden: shouldReduceMotion
-      ? { opacity: 1, y: -52, scale: 1.22, zIndex: 5 }
-      : { opacity: 0, y: 260, scale: 0.42, zIndex: 2 },
+      ? { opacity: 1, y: -18, scale: 1.08 }
+      : { opacity: 0, y: 260, scale: 0.96 },
     show: {
-      opacity: shouldReduceMotion ? 1 : [0, 1, 1],
-      y: shouldReduceMotion ? -52 : [260, 150, 28, -72, -52],
-      scale: shouldReduceMotion ? 1.22 : [0.42, 0.52, 0.82, 1.28, 1.22],
-      zIndex: 5,
+      opacity: 1,
+      y: shouldReduceMotion ? -18 : [260, 178, 58, 58, -28, -18],
+      scale: shouldReduceMotion ? 1.08 : [0.96, 0.96, 0.96, 0.96, 1.12, 1.08],
       transition: {
         opacity: {
-          delay: shouldReduceMotion ? 0 : 3.0,
-          duration: shouldReduceMotion ? 0 : 0.38,
-          times: [0, 0.35, 1]
+          delay: shouldReduceMotion ? 0 : 1.7,
+          duration: shouldReduceMotion ? 0 : 0.18
         },
         y: {
-          delay: shouldReduceMotion ? 0 : 1.72,
-          duration: shouldReduceMotion ? 0 : 2.45,
-          times: [0, 0.24, 0.54, 0.9, 1],
+          delay: shouldReduceMotion ? 0 : 1.7,
+          duration: shouldReduceMotion ? 0 : 4.35,
+          times: [0, 0.3, 0.56, 0.76, 0.94, 1],
           ease: easeOut
         },
         scale: {
-          delay: shouldReduceMotion ? 0 : 1.72,
-          duration: shouldReduceMotion ? 0 : 2.45,
-          times: [0, 0.24, 0.54, 0.9, 1],
+          delay: shouldReduceMotion ? 0 : 1.7,
+          duration: shouldReduceMotion ? 0 : 4.35,
+          times: [0, 0.3, 0.56, 0.76, 0.94, 1],
           ease: easeOut
-        },
-        zIndex: { delay: shouldReduceMotion ? 0 : 3.0, duration: 0 }
+        }
       }
     }
   };
@@ -129,27 +142,29 @@ export default function InvitationEnvelope() {
       <div className="envelope-stage" aria-label="Keller Party invitation">
         <motion.div className="envelope-back" variants={envelopeVariants} />
         <motion.div className="envelope-flap" variants={flapVariants} />
-        <motion.div className="card-frame" variants={cardVariants}>
-          <div className="foil foil-top" />
-          <div className="foil foil-side" />
-          <div className="invite-card">
-            <div className="card-topline">
-              <p className="event-label">KELLER PARTY</p>
+        <motion.div className="card-reveal-mask" variants={cardMaskVariants}>
+          <motion.div className="card-frame" variants={cardVariants}>
+            <div className="foil foil-top" />
+            <div className="foil foil-side" />
+            <div className="invite-card">
+              <div className="card-topline">
+                <p className="event-label">KELLER PARTY</p>
+              </div>
+              <p className="card-subtitle">Zurich After Dark</p>
+              <h2>June 27</h2>
+              <p className="location">
+                Icon Club, St. Peterstrasse 1, 8001 Zurich
+              </p>
+              <ul className="details-list">
+                {eventDetails.map((detail) => (
+                  <li key={detail}>{detail}</li>
+                ))}
+              </ul>
+              <Link href="/request-access" className="primary-button button-link">
+                Request access
+              </Link>
             </div>
-            <p className="card-subtitle">Zurich After Dark</p>
-            <h2>June 27</h2>
-            <p className="location">
-              Icon Club, St. Peterstrasse 1, 8001 Zurich
-            </p>
-            <ul className="details-list">
-              {eventDetails.map((detail) => (
-                <li key={detail}>{detail}</li>
-              ))}
-            </ul>
-            <Link href="/request-access" className="primary-button button-link">
-              Request access
-            </Link>
-          </div>
+          </motion.div>
         </motion.div>
         <motion.div className="envelope-pocket" variants={envelopeVariants} />
       </div>
