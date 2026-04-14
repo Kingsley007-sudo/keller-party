@@ -616,9 +616,18 @@ select {
     radial-gradient(circle at 50% 100%, rgba(27, 79, 156, 0.2), transparent 48%);
 }
 
+.card-reveal-mask {
+  position: absolute;
+  inset: 0 -180px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .card-frame {
   position: relative;
-  z-index: 2;
   width: min(100%, 460px);
   padding: 18px;
   border: 1px solid rgba(215, 173, 98, 0.16);
@@ -632,7 +641,8 @@ select {
     0 0 0 1px rgba(16, 34, 63, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   opacity: 0;
-  transform: translateY(260px) scale(0.42);
+  transform: translateY(260px) scale(0.96);
+  pointer-events: auto;
   transition:
     transform 260ms ease,
     box-shadow 260ms ease,
