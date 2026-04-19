@@ -31,14 +31,18 @@ export default function InvitationEnvelope() {
   const flapVariants = {
     hidden: {
       opacity: shouldReduceMotion ? 0 : 1,
+      x: 0,
       y: shouldReduceMotion ? 34 : 0,
       scale: shouldReduceMotion ? 0.92 : 1,
+      rotate: 0,
       rotateX: shouldReduceMotion ? 176 : 0
     },
     show: {
-      opacity: shouldReduceMotion ? 0 : [1, 1, 0],
-      y: shouldReduceMotion ? 34 : [0, 0, 34],
-      scale: shouldReduceMotion ? 0.92 : [1, 1, 0.92],
+      opacity: shouldReduceMotion ? 0 : [1, 1, 1, 0],
+      x: shouldReduceMotion ? 0 : [0, 0, -320, -420],
+      y: shouldReduceMotion ? 34 : [0, 0, 70, 120],
+      scale: shouldReduceMotion ? 0.92 : [1, 1, 0.9, 0.86],
+      rotate: shouldReduceMotion ? 0 : [0, 0, -14, -24],
       rotateX: 176,
       transition: {
         rotateX: {
@@ -47,21 +51,33 @@ export default function InvitationEnvelope() {
           ease: easeOut
         },
         opacity: {
-          delay: shouldReduceMotion ? 0 : 5.15,
-          duration: shouldReduceMotion ? 0 : 0.8,
-          times: [0, 0.2, 1],
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.62, 0.82, 1],
+          ease: easeOut
+        },
+        x: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
           ease: easeOut
         },
         y: {
-          delay: shouldReduceMotion ? 0 : 5.15,
-          duration: shouldReduceMotion ? 0 : 0.8,
-          times: [0, 0.2, 1],
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
           ease: easeOut
         },
         scale: {
-          delay: shouldReduceMotion ? 0 : 5.15,
-          duration: shouldReduceMotion ? 0 : 0.8,
-          times: [0, 0.2, 1],
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
+          ease: easeOut
+        },
+        rotate: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
           ease: easeOut
         }
       }
@@ -70,17 +86,45 @@ export default function InvitationEnvelope() {
 
   const envelopeVariants = {
     hidden: shouldReduceMotion
-      ? { opacity: 0, y: 34, scale: 0.92 }
-      : { opacity: 1, y: 0, scale: 1 },
+      ? { opacity: 0, x: 0, y: 34, scale: 0.92, rotate: 0 }
+      : { opacity: 1, x: 0, y: 0, scale: 1, rotate: 0 },
     show: {
-      opacity: shouldReduceMotion ? 0 : [1, 1, 0],
-      y: shouldReduceMotion ? 34 : [0, 0, 34],
-      scale: shouldReduceMotion ? 0.92 : [1, 1, 0.92],
+      opacity: shouldReduceMotion ? 0 : [1, 1, 1, 0],
+      x: shouldReduceMotion ? 0 : [0, 0, -320, -420],
+      y: shouldReduceMotion ? 34 : [0, 0, 70, 120],
+      scale: shouldReduceMotion ? 0.92 : [1, 1, 0.9, 0.86],
+      rotate: shouldReduceMotion ? 0 : [0, 0, -14, -24],
       transition: {
-        delay: shouldReduceMotion ? 0 : 5.15,
-        duration: shouldReduceMotion ? 0 : 0.8,
-        times: [0, 0.35, 1],
-        ease: easeOut
+        opacity: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.62, 0.82, 1],
+          ease: easeOut
+        },
+        x: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
+          ease: easeOut
+        },
+        y: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
+          ease: easeOut
+        },
+        scale: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
+          ease: easeOut
+        },
+        rotate: {
+          delay: shouldReduceMotion ? 0 : 5.12,
+          duration: shouldReduceMotion ? 0 : 0.95,
+          times: [0, 0.18, 0.76, 1],
+          ease: easeOut
+        }
       }
     }
   };
@@ -111,18 +155,18 @@ export default function InvitationEnvelope() {
       scale: shouldReduceMotion ? 1.08 : [0.96, 0.96, 0.96, 0.96, 1.12, 1.08],
       transition: {
         opacity: {
-          delay: shouldReduceMotion ? 0 : 1.7,
+          delay: shouldReduceMotion ? 0 : 1.45,
           duration: shouldReduceMotion ? 0 : 0.18
         },
         y: {
-          delay: shouldReduceMotion ? 0 : 1.7,
-          duration: shouldReduceMotion ? 0 : 4.35,
+          delay: shouldReduceMotion ? 0 : 1.45,
+          duration: shouldReduceMotion ? 0 : 3.65,
           times: [0, 0.3, 0.56, 0.76, 0.94, 1],
           ease: easeOut
         },
         scale: {
-          delay: shouldReduceMotion ? 0 : 1.7,
-          duration: shouldReduceMotion ? 0 : 4.35,
+          delay: shouldReduceMotion ? 0 : 1.45,
+          duration: shouldReduceMotion ? 0 : 3.65,
           times: [0, 0.3, 0.56, 0.76, 0.94, 1],
           ease: easeOut
         }

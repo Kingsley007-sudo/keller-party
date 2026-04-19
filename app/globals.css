@@ -548,6 +548,11 @@ select {
 
 .envelope-stage {
   position: relative;
+  --envelope-bottom: 54px;
+  --envelope-height: 330px;
+  --envelope-flap-height: 245px;
+  --envelope-corner: 18px;
+  --envelope-flap-edge-inset: 6px;
   width: min(100%, 500px);
   min-height: 660px;
   display: grid;
@@ -565,11 +570,11 @@ select {
 }
 
 .envelope-back {
-  bottom: 54px;
+  bottom: var(--envelope-bottom);
   z-index: 0;
-  height: 330px;
+  height: var(--envelope-height);
   border: 1px solid rgba(215, 173, 98, 0.18);
-  border-radius: 18px;
+  border-radius: var(--envelope-corner);
   background:
     linear-gradient(145deg, rgba(13, 28, 50, 0.98), rgba(4, 9, 16, 0.98)),
     radial-gradient(circle at top, rgba(215, 173, 98, 0.12), transparent 44%);
@@ -579,10 +584,12 @@ select {
 }
 
 .envelope-flap {
-  bottom: 332px;
+  bottom: calc(var(--envelope-bottom) + var(--envelope-height) - var(--envelope-flap-height));
   z-index: 4;
-  height: 245px;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  height: var(--envelope-flap-height);
+  border-top-left-radius: var(--envelope-corner);
+  border-top-right-radius: var(--envelope-corner);
+  clip-path: polygon(var(--envelope-flap-edge-inset) 0, calc(100% - var(--envelope-flap-edge-inset)) 0, 50% 100%);
   background:
     linear-gradient(160deg, rgba(27, 58, 102, 0.98), rgba(8, 17, 30, 0.98) 58%, rgba(182, 132, 52, 0.16)),
     linear-gradient(90deg, rgba(215, 173, 98, 0.18), transparent 32%, rgba(215, 173, 98, 0.12));
@@ -591,11 +598,11 @@ select {
 }
 
 .envelope-pocket {
-  bottom: 54px;
+  bottom: var(--envelope-bottom);
   z-index: 3;
-  height: 330px;
+  height: var(--envelope-height);
   border: 1px solid rgba(215, 173, 98, 0.16);
-  border-radius: 18px;
+  border-radius: var(--envelope-corner);
   overflow: hidden;
   background:
     linear-gradient(38deg, rgba(8, 16, 28, 0.98) 0 49.6%, rgba(6, 12, 21, 0.98) 50%),
@@ -619,7 +626,7 @@ select {
 .card-reveal-mask {
   position: absolute;
   inset: 0 -180px;
-  z-index: 2;
+  z-index: 5;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -1450,6 +1457,11 @@ select {
   }
 
   .envelope-stage {
+    --envelope-bottom: 32px;
+    --envelope-height: 270px;
+    --envelope-flap-height: 200px;
+    --envelope-corner: 16px;
+    --envelope-flap-edge-inset: 5px;
     min-height: 590px;
   }
 
@@ -1461,13 +1473,13 @@ select {
 
   .envelope-back,
   .envelope-pocket {
-    bottom: 32px;
-    height: 270px;
+    bottom: var(--envelope-bottom);
+    height: var(--envelope-height);
   }
 
   .envelope-flap {
-    bottom: 284px;
-    height: 200px;
+    bottom: calc(var(--envelope-bottom) + var(--envelope-height) - var(--envelope-flap-height));
+    height: var(--envelope-flap-height);
   }
 
   .form-header {
