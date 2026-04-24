@@ -5,6 +5,10 @@ import {
   isValidAdminSessionToken
 } from "@/lib/admin-auth";
 import { updateRegistrationStatus } from "@/lib/registrations";
+import {
+  sendRegistrationAcceptedMessage,
+  sendRegistrationRejectedMessage
+} from "@/lib/whatsapp";
 
 export async function PATCH(request, { params }) {
   const sessionToken = cookies().get(adminSessionCookieName)?.value;
@@ -20,5 +24,22 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  return NextResponse.json({ registration: result.registration });
+  let messageResult = null;
+
+  if (result.registration.status === "accepted") {
+    messageResult = await sendRegistrationAcceptedMessage(result.registration);
+  }
+
+  if (result.registration.status === "rejected") {
+    messageResult = await sendRegistrationRejectedMessage(result.registration);
+  }
+
+  const responsePayload = { registration: result.registration };
+
+  if (messageResult && !messageResult.ok) {
+    console.error("WhatsApp status message failed:", messageResult.error);
+    responsePayload.messageWarning = messageResult.error;
+  }
+
+  return NextResponse.json(responsePayload);
 }

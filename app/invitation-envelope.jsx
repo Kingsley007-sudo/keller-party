@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 
@@ -15,6 +16,17 @@ const easeOut = [0.2, 0.74, 0.2, 1];
 
 export default function InvitationEnvelope() {
   const shouldReduceMotion = useReducedMotion();
+  const [isCompactViewport, setIsCompactViewport] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 600px)");
+    const syncViewport = () => setIsCompactViewport(mediaQuery.matches);
+
+    syncViewport();
+    mediaQuery.addEventListener("change", syncViewport);
+
+    return () => mediaQuery.removeEventListener("change", syncViewport);
+  }, []);
 
   const stageVariants = {
     hidden: shouldReduceMotion
@@ -147,16 +159,34 @@ export default function InvitationEnvelope() {
 
   const cardVariants = {
     hidden: shouldReduceMotion
-      ? { opacity: 1, y: -18, scale: 1.08 }
-      : { opacity: 0, y: 260, scale: 0.96 },
+      ? { opacity: 1, y: -18, scale: 1.02 }
+      : {
+          opacity: 0,
+          y: isCompactViewport ? 220 : 260,
+          scale: isCompactViewport ? 0.84 : 0.96
+        },
     show: {
-      opacity: 1,
-      y: shouldReduceMotion ? -18 : [260, 178, 58, 58, -28, -18],
-      scale: shouldReduceMotion ? 1.08 : [0.96, 0.96, 0.96, 0.96, 1.12, 1.08],
+      opacity: shouldReduceMotion
+        ? 1
+        : isCompactViewport
+          ? [0, 0, 1, 1, 1, 1]
+          : 1,
+      y: shouldReduceMotion
+        ? -18
+        : isCompactViewport
+          ? [220, 150, 84, 52, -20, -16]
+          : [260, 178, 58, 58, -28, -18],
+      scale: shouldReduceMotion
+        ? 1.02
+        : isCompactViewport
+          ? [0.84, 0.84, 0.86, 0.9, 0.96, 0.94]
+          : [0.96, 0.96, 0.96, 0.98, 1.04, 1.02],
       transition: {
         opacity: {
           delay: shouldReduceMotion ? 0 : 1.45,
-          duration: shouldReduceMotion ? 0 : 0.18
+          duration: shouldReduceMotion ? 0 : isCompactViewport ? 3.65 : 0.18,
+          times: isCompactViewport ? [0, 0.36, 0.48, 0.76, 0.94, 1] : undefined,
+          ease: easeOut
         },
         y: {
           delay: shouldReduceMotion ? 0 : 1.45,
@@ -211,6 +241,7 @@ export default function InvitationEnvelope() {
           </motion.div>
         </motion.div>
         <motion.div className="envelope-pocket" variants={envelopeVariants} />
+        <motion.div className="envelope-mouth" variants={envelopeVariants} />
       </div>
     </motion.div>
   );

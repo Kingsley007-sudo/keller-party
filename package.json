@@ -8,10 +8,15 @@
     "start": "next start",
     "lint": "next lint",
     "check:supabase": "node scripts/check-supabase.mjs",
-    "generate:session-secret": "node scripts/generate-session-secret.mjs"
+    "generate:session-secret": "node scripts/generate-session-secret.mjs",
+    "firebase": "firebase",
+    "firebase:init:apphosting": "firebase init apphosting",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:deploy": "firebase deploy"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.103.0",
+    "firebase": "^12.12.1",
     "framer-motion": "^12.38.0",
     "next": "^14.2.25",
     "react": "^18.3.1",
@@ -19,6 +24,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35"
+    "eslint-config-next": "^14.2.35",
+    "firebase-tools": "^15.15.0"
   }
 }

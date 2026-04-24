@@ -3,20 +3,16 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  buildAcceptedWhatsAppMessage,
+  buildRejectedWhatsAppMessage
+} from "@/lib/whatsapp-copy";
 
 const statusLabels = {
   pending: "Pending",
   accepted: "Accepted",
   rejected: "Rejected"
 };
-
-const acceptanceMessage = `KELLER PARTY
-You have been selected.
-We look forward to welcoming you to the Icon Club Zurich on June 27.
-Please arrive promptly at 23:00.
-The dress code is Elegant and will be strictly enforced.
-Photography and filming are prohibited throughout the evening.
-This is a private event. Your invitation is personal and non-transferable.`;
 
 function formatDate(timestamp) {
   return new Intl.DateTimeFormat("en-CH", {
@@ -130,6 +126,7 @@ export default function AdminDashboard({ initialRegistrations }) {
         registration.id === id ? payload.registration : registration
       )
     );
+    setRequestError(payload.messageWarning || "");
     setActiveId("");
   }
 
@@ -277,12 +274,16 @@ export default function AdminDashboard({ initialRegistrations }) {
                       <th scope="col">Submitted</th>
                       <th scope="col">Status</th>
                       <th scope="col">Actions</th>
-                      <th scope="col">WhatsApp</th>
+                      <th scope="col">Fallback</th>
                     </tr>
                   </thead>
                   <tbody>
                     {visibleRegistrations.map((registration) => {
                       const guestCount = registration.guests.length;
+                      const fallbackMessage =
+                        registration.status === "accepted"
+                          ? buildAcceptedWhatsAppMessage(registration.fullName)
+                          : buildRejectedWhatsAppMessage(registration.fullName);
 
                       return (
                         <tr key={registration.id}>
@@ -341,20 +342,21 @@ export default function AdminDashboard({ initialRegistrations }) {
                             </div>
                           </td>
                           <td>
-                            {registration.status === "accepted" ? (
+                            {registration.status === "accepted" ||
+                            registration.status === "rejected" ? (
                               <a
                                 className="compact-button compact-button-message button-link"
                                 href={getWhatsAppUrl(
                                   registration.phoneNumber,
-                                  acceptanceMessage
+                                  fallbackMessage
                                 )}
                                 target="_blank"
                                 rel="noreferrer"
                               >
-                                Message
+                                Manual resend
                               </a>
                             ) : (
-                              <span className="muted-table-text">Accept first</span>
+                              <span className="muted-table-text">Decide first</span>
                             )}
                           </td>
                         </tr>

@@ -1,0 +1,54 @@
+runConfig:
+  maxInstances: 10
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: ADMIN_PASSWORD
+    secret: ADMIN_PASSWORD
+    availability:
+      - RUNTIME
+
+  - variable: SESSION_SECRET
+    secret: SESSION_SECRET
+    availability:
+      - RUNTIME
+
+  - variable: SUPABASE_URL
+    secret: SUPABASE_URL
+    availability:
+      - RUNTIME
+
+  - variable: SUPABASE_SERVICE_ROLE_KEY
+    secret: SUPABASE_SERVICE_ROLE_KEY
+    availability:
+      - RUNTIME
+
+  - variable: WHATSAPP_ACCESS_TOKEN
+    secret: WHATSAPP_ACCESS_TOKEN
+    availability:
+      - RUNTIME
+
+  - variable: WHATSAPP_PHONE_NUMBER_ID
+    secret: WHATSAPP_PHONE_NUMBER_ID
+    availability:
+      - RUNTIME
+
+  - variable: WHATSAPP_API_VERSION
+    value: v25.0
+
+  - variable: WHATSAPP_DEFAULT_COUNTRY_CODE
+    value: "41"
+
+  - variable: WHATSAPP_TEMPLATE_LANGUAGE
+    value: en_US
+
+  - variable: WHATSAPP_REQUEST_TEMPLATE_NAME
+    value: keller_party_request_received
+
+  - variable: WHATSAPP_ACCEPTED_TEMPLATE_NAME
+    value: keller_party_access_approved
+
+  - variable: WHATSAPP_REJECTED_TEMPLATE_NAME
+    value: keller_party_access_rejected

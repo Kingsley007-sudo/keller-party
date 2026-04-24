@@ -563,7 +563,8 @@ select {
 
 .envelope-back,
 .envelope-pocket,
-.envelope-flap {
+.envelope-flap,
+.envelope-mouth {
   position: absolute;
   width: min(100%, 500px);
   pointer-events: none;
@@ -621,6 +622,26 @@ select {
     linear-gradient(142deg, transparent 49.5%, rgba(215, 173, 98, 0.18) 50%, transparent 50.5%),
     linear-gradient(-142deg, transparent 49.5%, rgba(215, 173, 98, 0.12) 50%, transparent 50.5%),
     radial-gradient(circle at 50% 100%, rgba(27, 79, 156, 0.2), transparent 48%);
+}
+
+.envelope-mouth {
+  bottom: var(--envelope-bottom);
+  z-index: 1000;
+  height: var(--envelope-height);
+  overflow: hidden;
+  border: 1px solid rgba(215, 173, 98, 0.16);
+  border-right: 1px solid rgba(215, 173, 98, 0.14);
+  border-bottom: 1px solid rgba(215, 173, 98, 0.16);
+  border-left: 1px solid rgba(215, 173, 98, 0.14);
+  border-radius: var(--envelope-corner);
+  clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(38deg, rgba(8, 16, 28, 0.98) 0 49.6%, rgba(6, 12, 21, 0.98) 50%),
+    linear-gradient(-38deg, rgba(10, 22, 38, 0.98) 0 49.6%, rgba(6, 12, 21, 0.98) 50%),
+    linear-gradient(180deg, rgba(7, 14, 24, 0.96) 0 34%, rgba(5, 10, 18, 0.98) 34% 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -20px 40px rgba(0, 0, 0, 0.24);
 }
 
 .card-reveal-mask {
@@ -1424,6 +1445,7 @@ select {
 
   .request-layout {
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 
   .privacy-layout {
@@ -1467,7 +1489,8 @@ select {
 
   .envelope-back,
   .envelope-pocket,
-  .envelope-flap {
+  .envelope-flap,
+  .envelope-mouth {
     width: min(100%, 420px);
   }
 
@@ -1492,6 +1515,175 @@ select {
 
   .admin-filter-bar {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-shell {
+    place-items: start center;
+    padding: 22px 14px 34px;
+  }
+
+  .home-hero {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .home-hero .hero-copy {
+    width: 100%;
+  }
+
+  .scene {
+    min-height: 560px;
+    place-items: center;
+    overflow: visible;
+  }
+
+  .envelope-stage {
+    --envelope-bottom: 24px;
+    --envelope-height: 230px;
+    --envelope-flap-height: 170px;
+    width: min(100%, 340px);
+    min-height: 520px;
+  }
+
+  .envelope-back,
+  .envelope-pocket,
+  .envelope-flap,
+  .envelope-mouth {
+    width: min(100%, 340px);
+  }
+
+  .card-reveal-mask {
+    inset: 0;
+    z-index: 5;
+    overflow: hidden;
+  }
+
+  .card-frame {
+    width: min(76%, 270px);
+    padding: 8px;
+    border-radius: 16px;
+  }
+
+  .card-frame::before {
+    border-radius: 16px;
+  }
+
+  .invite-card {
+    padding: 18px 12px;
+    border-radius: 14px;
+  }
+
+  .invite-card::after {
+    border-radius: 14px;
+  }
+
+  .event-label,
+  .location,
+  .card-subtitle {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+  }
+
+  .invite-card h2 {
+    font-size: 2.6rem;
+    margin: 14px 0 8px;
+  }
+
+  .location {
+    margin-bottom: 18px;
+  }
+
+  .details-list {
+    gap: 8px;
+    font-size: 0.82rem;
+  }
+
+  .primary-button {
+    margin-top: 18px;
+    padding: 12px 12px;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+  }
+
+  .request-shell {
+    align-items: start;
+  }
+
+  .request-layout {
+    width: 100%;
+    gap: 24px;
+  }
+
+  .request-copy,
+  .request-card,
+  .success-card,
+  .request-form {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .request-copy {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .request-copy h1 {
+    font-size: 3rem;
+  }
+
+  .request-actions {
+    justify-content: center;
+  }
+
+  .success-card,
+  .request-form {
+    border-radius: 18px;
+    padding: 20px;
+  }
+
+  .request-form {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .envelope-stage {
+    width: min(100%, 320px);
+  }
+
+  .envelope-back,
+  .envelope-pocket,
+  .envelope-flap,
+  .envelope-mouth {
+    width: min(100%, 320px);
+  }
+
+  .card-frame {
+    width: 72%;
+  }
+
+  .invite-card {
+    padding: 16px 10px;
+  }
+
+  .event-label,
+  .location,
+  .card-subtitle {
+    font-size: 0.58rem;
+  }
+
+  .invite-card h2 {
+    font-size: 2.35rem;
+  }
+
+  .details-list {
+    font-size: 0.76rem;
+  }
+
+  .primary-button {
+    font-size: 0.66rem;
   }
 }
 

@@ -6,6 +6,7 @@ import {
 } from "@/lib/admin-auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createRegistration, listRegistrations } from "@/lib/registrations";
+import { sendRegistrationReceivedMessage } from "@/lib/whatsapp";
 
 const submissionRateLimit = {
   limit: 5,
@@ -59,5 +60,13 @@ export async function POST(request) {
     return NextResponse.json({ errors: result.errors }, { status: 400 });
   }
 
-  return NextResponse.json({ registration: result.registration }, { status: 201 });
+  const messageResult = await sendRegistrationReceivedMessage(result.registration);
+  const responsePayload = { registration: result.registration };
+
+  if (!messageResult.ok && !messageResult.skipped) {
+    console.error("WhatsApp request-received message failed:", messageResult.error);
+    responsePayload.messageWarning = messageResult.error;
+  }
+
+  return NextResponse.json(responsePayload, { status: 201 });
 }
