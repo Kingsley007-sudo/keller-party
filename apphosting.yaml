@@ -25,16 +25,6 @@ env:
     availability:
       - RUNTIME
 
-  - variable: WHATSAPP_ACCESS_TOKEN
-    secret: WHATSAPP_ACCESS_TOKEN
-    availability:
-      - RUNTIME
-
-  - variable: WHATSAPP_PHONE_NUMBER_ID
-    secret: WHATSAPP_PHONE_NUMBER_ID
-    availability:
-      - RUNTIME
-
   - variable: WHATSAPP_API_VERSION
     value: v25.0
 

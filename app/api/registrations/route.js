@@ -30,8 +30,17 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const registrations = await listRegistrations();
-  return NextResponse.json({ registrations });
+  try {
+    const registrations = await listRegistrations();
+    return NextResponse.json({ registrations });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "The registrations could not be loaded.";
+
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function POST(request) {

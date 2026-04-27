@@ -19,7 +19,17 @@ export default async function AdminPage() {
     redirect("/admin/login?next=/admin");
   }
 
-  const registrations = await listRegistrations();
+  let registrations = [];
+  let loadError = "";
+
+  try {
+    registrations = await listRegistrations();
+  } catch (error) {
+    loadError =
+      error instanceof Error
+        ? error.message
+        : "The registrations could not be loaded right now.";
+  }
 
   return (
     <main className="app-shell request-shell">
@@ -36,7 +46,15 @@ export default async function AdminPage() {
           </p>
         </div>
 
-        <AdminDashboard initialRegistrations={registrations} />
+        {loadError ? (
+          <div className="admin-empty-state">
+            <p className="flow-label">Data connection problem</p>
+            <h3>The admin area could not load registrations.</h3>
+            <p className="hero-description">{loadError}</p>
+          </div>
+        ) : (
+          <AdminDashboard initialRegistrations={registrations} />
+        )}
       </section>
     </main>
   );

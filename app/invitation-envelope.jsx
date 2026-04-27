@@ -47,49 +47,19 @@ export default function InvitationEnvelope() {
       y: shouldReduceMotion ? 34 : 0,
       scale: shouldReduceMotion ? 0.92 : 1,
       rotate: 0,
-      rotateX: shouldReduceMotion ? 176 : 0
+      rotateX: shouldReduceMotion ? -176 : 0
     },
     show: {
-      opacity: shouldReduceMotion ? 0 : [1, 1, 1, 0],
-      x: shouldReduceMotion ? 0 : [0, 0, -320, -420],
-      y: shouldReduceMotion ? 34 : [0, 0, 70, 120],
-      scale: shouldReduceMotion ? 0.92 : [1, 1, 0.9, 0.86],
-      rotate: shouldReduceMotion ? 0 : [0, 0, -14, -24],
-      rotateX: 176,
+      opacity: shouldReduceMotion ? 0 : 1,
+      x: 0,
+      y: shouldReduceMotion ? 34 : 0,
+      scale: shouldReduceMotion ? 0.92 : 1,
+      rotate: 0,
+      rotateX: -176,
       transition: {
         rotateX: {
           delay: shouldReduceMotion ? 0 : 0.25,
           duration: shouldReduceMotion ? 0 : 1.45,
-          ease: easeOut
-        },
-        opacity: {
-          delay: shouldReduceMotion ? 0 : 5.12,
-          duration: shouldReduceMotion ? 0 : 0.95,
-          times: [0, 0.62, 0.82, 1],
-          ease: easeOut
-        },
-        x: {
-          delay: shouldReduceMotion ? 0 : 5.12,
-          duration: shouldReduceMotion ? 0 : 0.95,
-          times: [0, 0.18, 0.76, 1],
-          ease: easeOut
-        },
-        y: {
-          delay: shouldReduceMotion ? 0 : 5.12,
-          duration: shouldReduceMotion ? 0 : 0.95,
-          times: [0, 0.18, 0.76, 1],
-          ease: easeOut
-        },
-        scale: {
-          delay: shouldReduceMotion ? 0 : 5.12,
-          duration: shouldReduceMotion ? 0 : 0.95,
-          times: [0, 0.18, 0.76, 1],
-          ease: easeOut
-        },
-        rotate: {
-          delay: shouldReduceMotion ? 0 : 5.12,
-          duration: shouldReduceMotion ? 0 : 0.95,
-          times: [0, 0.18, 0.76, 1],
           ease: easeOut
         }
       }
@@ -146,12 +116,10 @@ export default function InvitationEnvelope() {
       ? { clipPath: "inset(0px 0px 0px 0px)" }
       : { clipPath: "inset(0px 0px 384px 0px)" },
     show: {
-      clipPath: shouldReduceMotion
-        ? "inset(0px 0px 0px 0px)"
-        : "inset(0px 0px 0px 0px)",
+      clipPath: "inset(0px 0px 0px 0px)",
       transition: {
-        delay: shouldReduceMotion ? 0 : 5.25,
-        duration: shouldReduceMotion ? 0 : 0.7,
+        delay: shouldReduceMotion ? 0 : 5.15,
+        duration: shouldReduceMotion ? 0 : 1.35,
         ease: easeOut
       }
     }
@@ -159,10 +127,10 @@ export default function InvitationEnvelope() {
 
   const cardVariants = {
     hidden: shouldReduceMotion
-      ? { opacity: 1, y: -18, scale: 1.02 }
+      ? { opacity: 1, y: -4, scale: 1.02 }
       : {
           opacity: 0,
-          y: isCompactViewport ? 220 : 260,
+          y: isCompactViewport ? 188 : 260,
           scale: isCompactViewport ? 0.84 : 0.96
         },
     show: {
@@ -172,32 +140,32 @@ export default function InvitationEnvelope() {
           ? [0, 0, 1, 1, 1, 1]
           : 1,
       y: shouldReduceMotion
-        ? -18
+        ? -4
         : isCompactViewport
-          ? [220, 150, 84, 52, -20, -16]
-          : [260, 178, 58, 58, -28, -18],
+          ? [188, 138, 84, 48, 10, 8]
+          : [260, 190, 72, 64, -16, -4],
       scale: shouldReduceMotion
         ? 1.02
         : isCompactViewport
-          ? [0.84, 0.84, 0.86, 0.9, 0.96, 0.94]
+          ? [0.84, 0.84, 0.87, 0.91, 0.95, 0.94]
           : [0.96, 0.96, 0.96, 0.98, 1.04, 1.02],
       transition: {
         opacity: {
           delay: shouldReduceMotion ? 0 : 1.45,
-          duration: shouldReduceMotion ? 0 : isCompactViewport ? 3.65 : 0.18,
-          times: isCompactViewport ? [0, 0.36, 0.48, 0.76, 0.94, 1] : undefined,
+          duration: shouldReduceMotion ? 0 : isCompactViewport ? 4.8 : 1.15,
+          times: isCompactViewport ? [0, 0.42, 0.56, 0.8, 0.94, 1] : [0, 0.72, 1],
           ease: easeOut
         },
         y: {
           delay: shouldReduceMotion ? 0 : 1.45,
-          duration: shouldReduceMotion ? 0 : 3.65,
-          times: [0, 0.3, 0.56, 0.76, 0.94, 1],
+          duration: shouldReduceMotion ? 0 : isCompactViewport ? 4.8 : 4.15,
+          times: isCompactViewport ? [0, 0.24, 0.46, 0.68, 0.88, 1] : [0, 0.24, 0.5, 0.74, 0.9, 1],
           ease: easeOut
         },
         scale: {
           delay: shouldReduceMotion ? 0 : 1.45,
-          duration: shouldReduceMotion ? 0 : 3.65,
-          times: [0, 0.3, 0.56, 0.76, 0.94, 1],
+          duration: shouldReduceMotion ? 0 : isCompactViewport ? 4.8 : 4.15,
+          times: isCompactViewport ? [0, 0.24, 0.46, 0.68, 0.88, 1] : [0, 0.24, 0.5, 0.74, 0.9, 1],
           ease: easeOut
         }
       }

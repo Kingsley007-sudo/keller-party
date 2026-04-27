@@ -1,5 +1,6 @@
 node_modules
 dist
+ firebase.js
 .next
 .next-dev.out.log
 .next-dev.err.log
