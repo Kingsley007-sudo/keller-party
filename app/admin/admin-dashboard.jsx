@@ -22,7 +22,17 @@ function formatDate(timestamp) {
 }
 
 function getWhatsAppUrl(phoneNumber, message) {
-  const normalizedPhoneNumber = phoneNumber.replace(/[^\d]/g, "");
+  const trimmedPhoneNumber = typeof phoneNumber === "string" ? phoneNumber.trim() : "";
+  const digits = trimmedPhoneNumber.replace(/[^\d]/g, "");
+  const normalizedPhoneNumber =
+    trimmedPhoneNumber.startsWith("+")
+      ? digits
+      : digits.startsWith("00")
+        ? digits.slice(2)
+        : digits.startsWith("0")
+          ? `41${digits.slice(1)}`
+          : digits;
+
   return `https://wa.me/${normalizedPhoneNumber}?text=${encodeURIComponent(message)}`;
 }
 
@@ -62,9 +72,14 @@ export default function AdminDashboard({ initialRegistrations }) {
     0
   );
   const totalGuests = totalPrimaryGuests + totalAdditionalGuests;
-  const pendingCount = registrations.filter(
-    (registration) => registration.status === "pending"
-  ).length;
+  const pendingCount =
+    registrations.filter((registration) => registration.status === "pending").length +
+    registrations.reduce(
+      (total, registration) =>
+        total +
+        registration.guests.filter((guest) => (guest.status || "pending") === "pending").length,
+      0
+    );
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
   const visibleRegistrations = registrations.filter((registration) => {
     const matchesStatus =
@@ -85,7 +100,10 @@ export default function AdminDashboard({ initialRegistrations }) {
       registration.dateOfBirth,
       ...registration.guests.flatMap((guest) => [
         guest.fullName,
-        guest.instagramName
+        guest.phoneNumber,
+        guest.dateOfBirth,
+        guest.instagramName,
+        guest.status
       ])
     ]
       .join(" ")
@@ -130,6 +148,35 @@ export default function AdminDashboard({ initialRegistrations }) {
     setActiveId("");
   }
 
+  async function handleGuestStatusChange(id, guestIndex, status) {
+    setActiveId(`${id}:guest:${guestIndex}`);
+    setRequestError("");
+
+    const response = await fetch(`/api/registrations/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ guestIndex, status })
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      setRequestError(payload.error || "The guest could not be updated.");
+      setActiveId("");
+      return;
+    }
+
+    setRegistrations((current) =>
+      current.map((registration) =>
+        registration.id === id ? payload.registration : registration
+      )
+    );
+    setRequestError(payload.messageWarning || "");
+    setActiveId("");
+  }
+
   function handleExportCsv() {
     const rows = [
       [
@@ -139,23 +186,39 @@ export default function AdminDashboard({ initialRegistrations }) {
         "Instagram",
         "Status",
         "Bringing guests",
-        "Guests",
+        "Guest name",
+        "Guest phone",
+        "Guest date of birth",
+        "Guest Instagram",
+        "Guest status",
         "Submitted",
         "Updated"
       ],
-      ...visibleRegistrations.map((registration) => [
-        registration.fullName,
-        registration.phoneNumber,
-        registration.dateOfBirth,
-        registration.instagramName,
-        statusLabels[registration.status],
-        registration.bringingGuests,
-        registration.guests
-          .map((guest) => `${guest.fullName} (${guest.instagramName})`)
-          .join("; "),
-        registration.createdAt,
-        registration.updatedAt
-      ])
+      ...visibleRegistrations.flatMap((registration) => {
+        const baseRow = [
+          registration.fullName,
+          registration.phoneNumber,
+          registration.dateOfBirth,
+          registration.instagramName,
+          statusLabels[registration.status],
+          registration.bringingGuests
+        ];
+
+        if (registration.guests.length === 0) {
+          return [[...baseRow, "", "", "", "", "", registration.createdAt, registration.updatedAt]];
+        }
+
+        return registration.guests.map((guest) => [
+          ...baseRow,
+          guest.fullName,
+          guest.phoneNumber,
+          guest.dateOfBirth,
+          guest.instagramName,
+          statusLabels[guest.status || "pending"],
+          registration.createdAt,
+          registration.updatedAt
+        ]);
+      })
     ];
 
     const dateStamp = new Date().toISOString().slice(0, 10);
@@ -303,13 +366,77 @@ export default function AdminDashboard({ initialRegistrations }) {
                             {guestCount > 0 ? (
                               <details className="guest-details">
                                 <summary>{guestCount} guest{guestCount === 1 ? "" : "s"}</summary>
-                                <ul>
-                                  {registration.guests.map((guest) => (
-                                    <li key={`${registration.id}-${guest.fullName}-${guest.instagramName}`}>
-                                      {guest.fullName} <span>{guest.instagramName}</span>
-                                    </li>
-                                  ))}
-                                </ul>
+                                <div className="guest-decision-list">
+                                  {registration.guests.map((guest, guestIndex) => {
+                                    const guestStatus = guest.status || "pending";
+                                    const guestActiveId = `${registration.id}:guest:${guestIndex}`;
+                                    const guestFallbackMessage =
+                                      guestStatus === "accepted"
+                                        ? buildAcceptedWhatsAppMessage(guest.fullName)
+                                        : buildRejectedWhatsAppMessage(guest.fullName);
+
+                                    return (
+                                      <div
+                                        key={`${registration.id}-${guest.fullName}-${guest.instagramName}-${guestIndex}`}
+                                        className="guest-decision-card"
+                                      >
+                                        <div className="guest-decision-main">
+                                          <strong>{guest.fullName}</strong>
+                                          <span>{guest.instagramName}</span>
+                                          <span>{guest.phoneNumber}</span>
+                                          <span>{guest.dateOfBirth}</span>
+                                          <span className={`status-badge status-${guestStatus}`}>
+                                            {statusLabels[guestStatus]}
+                                          </span>
+                                        </div>
+                                        <div className="table-actions guest-actions">
+                                          <button
+                                            type="button"
+                                            className="compact-button compact-button-accept"
+                                            disabled={activeId === guestActiveId}
+                                            onClick={() =>
+                                              handleGuestStatusChange(
+                                                registration.id,
+                                                guestIndex,
+                                                "accepted"
+                                              )
+                                            }
+                                          >
+                                            Accept
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className="compact-button compact-button-reject"
+                                            disabled={activeId === guestActiveId}
+                                            onClick={() =>
+                                              handleGuestStatusChange(
+                                                registration.id,
+                                                guestIndex,
+                                                "rejected"
+                                              )
+                                            }
+                                          >
+                                            Reject
+                                          </button>
+                                          {guestStatus === "accepted" ||
+                                          guestStatus === "rejected" ? (
+                                            <a
+                                              className="compact-button compact-button-message button-link"
+                                              href={getWhatsAppUrl(
+                                                guest.phoneNumber,
+                                                guestFallbackMessage
+                                              )}
+                                              target="_blank"
+                                              rel="noreferrer"
+                                            >
+                                              Resend
+                                            </a>
+                                          ) : null}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
                               </details>
                             ) : (
                               <span className="muted-table-text">None</span>

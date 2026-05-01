@@ -17,7 +17,7 @@ export default function RegistrationForm({
   flowLabel = "Registration",
   title = "Request access",
   successTitle = "Your request is in review.",
-  successMessage = "You will be contacted via WhatsApp regarding your status.",
+  successMessage = "You will receive your invitation decision by WhatsApp no later than two weeks before the party.",
   submitLabel = "Submit request",
   submittingLabel = "Submitting...",
   showPrivacyLink = true
@@ -36,7 +36,7 @@ export default function RegistrationForm({
         ...current,
         bringingGuests: value,
         guests: value === "yes" && current.guests.length === 0
-          ? [{ fullName: "", instagramName: "" }]
+          ? [{ fullName: "", phoneNumber: "", dateOfBirth: "", instagramName: "" }]
           : value === "no"
             ? []
             : current.guests
@@ -99,6 +99,14 @@ export default function RegistrationForm({
           nextGuestErrors.fullName = "Guest full name is required.";
         }
 
+        if (!guest.phoneNumber.trim()) {
+          nextGuestErrors.phoneNumber = "Guest phone number is required.";
+        }
+
+        if (!guest.dateOfBirth) {
+          nextGuestErrors.dateOfBirth = "Guest date of birth is required.";
+        }
+
         if (!guest.instagramName.trim()) {
           nextGuestErrors.instagramName = "Guest Instagram name is required.";
         }
@@ -156,7 +164,10 @@ export default function RegistrationForm({
   function addGuest() {
     setFormData((current) => ({
       ...current,
-      guests: [...current.guests, { fullName: "", instagramName: "" }]
+      guests: [
+        ...current.guests,
+        { fullName: "", phoneNumber: "", dateOfBirth: "", instagramName: "" }
+      ]
     }));
   }
 
@@ -267,7 +278,7 @@ export default function RegistrationForm({
           type="tel"
           value={formData.phoneNumber}
           onChange={handleChange}
-          placeholder="+41 ..."
+          placeholder="+41 or 079..."
         />
         {errors.phoneNumber ? <span className="field-error">{errors.phoneNumber}</span> : null}
       </label>
@@ -355,6 +366,35 @@ export default function RegistrationForm({
               </label>
 
               <label className="field">
+                <span>Guest phone number</span>
+                <input
+                  type="tel"
+                  value={guest.phoneNumber}
+                  onChange={(event) =>
+                    handleGuestChange(index, "phoneNumber", event.target.value)
+                  }
+                  placeholder="+41 or 079..."
+                />
+                {errors.guests?.[index]?.phoneNumber ? (
+                  <span className="field-error">{errors.guests[index].phoneNumber}</span>
+                ) : null}
+              </label>
+
+              <label className="field">
+                <span>Guest date of birth</span>
+                <input
+                  type="date"
+                  value={guest.dateOfBirth}
+                  onChange={(event) =>
+                    handleGuestChange(index, "dateOfBirth", event.target.value)
+                  }
+                />
+                {errors.guests?.[index]?.dateOfBirth ? (
+                  <span className="field-error">{errors.guests[index].dateOfBirth}</span>
+                ) : null}
+              </label>
+
+              <label className="field">
                 <span>Guest Instagram name</span>
                 <input
                   type="text"
@@ -383,7 +423,8 @@ export default function RegistrationForm({
         <p className="privacy-note">
           By submitting this request, you agree that Keller Party may store your
           registration details and use your phone number or Instagram name to review
-          access and contact you about this private event.{" "}
+          access and contact you about this private event. Entry is 15 CHF and
+          must be paid at the door by TWINT or card.{" "}
           <Link href="/privacy">Read the privacy notice.</Link>
         </p>
       ) : null}

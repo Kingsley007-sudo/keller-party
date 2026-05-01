@@ -4,7 +4,10 @@ import {
   adminSessionCookieName,
   isValidAdminSessionToken
 } from "@/lib/admin-auth";
-import { updateRegistrationStatus } from "@/lib/registrations";
+import {
+  updateRegistrationGuestStatus,
+  updateRegistrationStatus
+} from "@/lib/registrations";
 import {
   sendRegistrationAcceptedMessage,
   sendRegistrationRejectedMessage
@@ -18,20 +21,33 @@ export async function PATCH(request, { params }) {
   }
 
   const payload = await request.json();
-  const result = await updateRegistrationStatus(params.id, payload?.status);
+  const result =
+    payload?.guestIndex === undefined
+      ? await updateRegistrationStatus(params.id, payload?.status)
+      : await updateRegistrationGuestStatus(
+          params.id,
+          payload.guestIndex,
+          payload?.status
+        );
 
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
   let messageResult = null;
+  const messageRecipient = result.guest
+    ? {
+        fullName: result.guest.fullName,
+        phoneNumber: result.guest.phoneNumber
+      }
+    : result.registration;
 
-  if (result.registration.status === "accepted") {
-    messageResult = await sendRegistrationAcceptedMessage(result.registration);
+  if (payload?.status === "accepted") {
+    messageResult = await sendRegistrationAcceptedMessage(messageRecipient);
   }
 
-  if (result.registration.status === "rejected") {
-    messageResult = await sendRegistrationRejectedMessage(result.registration);
+  if (payload?.status === "rejected") {
+    messageResult = await sendRegistrationRejectedMessage(messageRecipient);
   }
 
   const responsePayload = { registration: result.registration };

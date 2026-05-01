@@ -65,9 +65,11 @@ You have been selected.
 We look forward to welcoming you to the Icon Club Zurich on June 27.
 Please arrive promptly at 23:00.
 The dress code is Elegant and will be strictly enforced.
-Photography and filming are prohibited throughout the evening.
+Photography Prohibited.
+Videography Prohibited.
+Entry is 15 CHF and must be paid at the door by TWINT or card.
 This is a private event. Your invitation is personal and non-transferable.`
-- `keller_party_access_rejected`: `Hi {{1}}, thank you for your Keller Party request. We are unable to approve this request.`
+- `keller_party_access_rejected`: `Hi {{1}}, thank you for your Keller Party attendance request. We are unable to approve this request.`
 
 The app copy for these templates lives in `lib/whatsapp-copy.js`. Keep the Meta template bodies matched to those strings.
 

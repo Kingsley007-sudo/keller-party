@@ -101,8 +101,9 @@ select {
   font-family: var(--font-display), serif;
   font-size: clamp(4rem, 10vw, 7rem);
   line-height: 0.9;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
 }
 
 .hero-copy h1 span {
@@ -199,8 +200,9 @@ select {
   font-family: var(--font-display), serif;
   font-size: clamp(3.4rem, 8vw, 6rem);
   line-height: 0.92;
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
 }
 
 .request-actions {
@@ -388,6 +390,16 @@ select {
 .privacy-note a {
   color: var(--gold-300);
   text-decoration: none;
+}
+
+.review-notice {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(215, 173, 98, 0.28);
+  border-radius: 18px;
+  background: rgba(58, 39, 12, 0.72);
+  color: var(--gold-300);
+  font-weight: 700;
 }
 
 .privacy-layout {
@@ -762,7 +774,11 @@ select {
 }
 
 .event-label {
-  color: rgba(241, 241, 243, 0.86);
+  color: var(--gold-300);
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.25rem, 5vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 .card-subtitle {
@@ -775,8 +791,9 @@ select {
   font-family: var(--font-display), serif;
   font-size: clamp(3rem, 8vw, 4.4rem);
   line-height: 0.95;
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0;
   color: #f4f4f5;
 }
 
@@ -805,8 +822,18 @@ select {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #9be6ff, #a875f7);
-  box-shadow: 0 0 18px rgba(87, 196, 255, 0.34);
+  background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+  box-shadow: 0 0 18px rgba(215, 173, 98, 0.34);
+}
+
+.entry-note {
+  margin: 12px 0 0;
+  color: rgba(234, 216, 176, 0.82);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
 .halo-ring {
@@ -1208,7 +1235,7 @@ select {
 
 .admin-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 1180px;
   border-collapse: collapse;
 }
 
@@ -1244,6 +1271,12 @@ select {
 .admin-table a {
   color: rgba(244, 239, 227, 0.9);
   text-decoration: none;
+}
+
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) {
+  min-width: 180px;
+  white-space: nowrap;
 }
 
 .table-primary-cell {
@@ -1286,6 +1319,42 @@ select {
   display: grid;
   justify-items: center;
   gap: 2px;
+}
+
+.guest-decision-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.guest-decision-card {
+  display: grid;
+  gap: 10px;
+  min-width: 280px;
+  padding: 12px;
+  border: 1px solid rgba(215, 173, 98, 0.12);
+  border-radius: 16px;
+  background: rgba(8, 14, 23, 0.76);
+}
+
+.guest-decision-main {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+
+.guest-decision-main strong {
+  color: var(--text-main);
+}
+
+.guest-decision-main span:not(.status-badge) {
+  color: rgba(228, 235, 244, 0.62);
+  font-size: 0.82rem;
+}
+
+.guest-actions {
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .table-actions {
@@ -1596,6 +1665,10 @@ select {
     letter-spacing: 0.08em;
   }
 
+  .event-label {
+    font-size: 1.08rem;
+  }
+
   .invite-card h2 {
     font-size: 2.6rem;
     margin: 14px 0 8px;
@@ -1608,6 +1681,11 @@ select {
   .details-list {
     gap: 8px;
     font-size: 0.82rem;
+  }
+
+  .entry-note {
+    font-size: 0.56rem;
+    letter-spacing: 0.02em;
   }
 
   .primary-button {
@@ -1682,12 +1760,20 @@ select {
     font-size: 0.58rem;
   }
 
+  .event-label {
+    font-size: 0.98rem;
+  }
+
   .invite-card h2 {
     font-size: 2.35rem;
   }
 
   .details-list {
     font-size: 0.76rem;
+  }
+
+  .entry-note {
+    font-size: 0.5rem;
   }
 
   .primary-button {

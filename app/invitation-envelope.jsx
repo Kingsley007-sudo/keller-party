@@ -8,8 +8,8 @@ const eventDetails = [
   "Private event.",
   "Limited access.",
   "Dresscode: Elegant",
-  "No photos. No videos.",
-  "Entry: 15 CHF"
+  "Photography Prohibited.",
+  "Videography Prohibited."
 ];
 
 const easeOut = [0.2, 0.74, 0.2, 1];
@@ -192,7 +192,6 @@ export default function InvitationEnvelope() {
               <div className="card-topline">
                 <p className="event-label">KELLER PARTY</p>
               </div>
-              <p className="card-subtitle">Zurich After Dark</p>
               <h2>June 27</h2>
               <p className="location">
                 Icon Club, St. Peterstrasse 1, 8001 Zurich
@@ -202,6 +201,7 @@ export default function InvitationEnvelope() {
                   <li key={detail}>{detail}</li>
                 ))}
               </ul>
+              <p className="entry-note">Entry: 15 CHF, TWINT or card at the door.</p>
               <Link href="/request-access" className="primary-button button-link">
                 Request access
               </Link>

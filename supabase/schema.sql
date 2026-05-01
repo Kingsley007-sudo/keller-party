@@ -27,7 +27,12 @@ alter table public.registrations
 
 update public.registrations
 set
-  phone_number_normalized = regexp_replace(phone_number, '\D', '', 'g'),
+  phone_number_normalized = case
+    when trim(phone_number) like '+%' then regexp_replace(phone_number, '\D', '', 'g')
+    when regexp_replace(phone_number, '\D', '', 'g') like '00%' then substring(regexp_replace(phone_number, '\D', '', 'g') from 3)
+    when regexp_replace(phone_number, '\D', '', 'g') like '0%' then '41' || substring(regexp_replace(phone_number, '\D', '', 'g') from 2)
+    else regexp_replace(phone_number, '\D', '', 'g')
+  end,
   instagram_name_normalized = lower(instagram_name)
 where phone_number_normalized is null
   or instagram_name_normalized is null;
