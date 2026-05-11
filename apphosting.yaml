@@ -48,6 +48,3 @@ env:
     secret: EMAIL_FROM
     availability:
       - RUNTIME
-
-  - variable: EMAIL_REPLY_TO
-    value: ""
