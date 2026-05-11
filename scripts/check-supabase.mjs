@@ -71,7 +71,7 @@ if (error) {
 
 const { error: schemaError } = await supabase
   .from("registrations")
-  .select("phone_number_normalized, instagram_name_normalized", { head: true })
+  .select("email, phone_number_normalized, instagram_name_normalized", { head: true })
   .limit(1);
 
 if (schemaError) {

@@ -25,20 +25,29 @@ env:
     availability:
       - RUNTIME
 
-  - variable: WHATSAPP_API_VERSION
-    value: v25.0
+  - variable: SMTP_HOST
+    value: smtp.gmail.com
 
-  - variable: WHATSAPP_DEFAULT_COUNTRY_CODE
-    value: "41"
+  - variable: SMTP_PORT
+    value: "465"
 
-  - variable: WHATSAPP_TEMPLATE_LANGUAGE
-    value: en_US
+  - variable: SMTP_SECURE
+    value: "true"
 
-  - variable: WHATSAPP_REQUEST_TEMPLATE_NAME
-    value: keller_party_request_received
+  - variable: SMTP_USER
+    secret: SMTP_USER
+    availability:
+      - RUNTIME
 
-  - variable: WHATSAPP_ACCEPTED_TEMPLATE_NAME
-    value: keller_party_access_approved
+  - variable: SMTP_PASSWORD
+    secret: SMTP_PASSWORD
+    availability:
+      - RUNTIME
 
-  - variable: WHATSAPP_REJECTED_TEMPLATE_NAME
-    value: keller_party_access_rejected
+  - variable: EMAIL_FROM
+    secret: EMAIL_FROM
+    availability:
+      - RUNTIME
+
+  - variable: EMAIL_REPLY_TO
+    value: ""

@@ -15,21 +15,20 @@ Next.js foundation for the Keller Party invitation experience, prepared for Fire
 - Next.js app router setup
 - App entry files
 - Base landing page shell
-- Discover documentation in `__Discover__/`
 - Request-access form with persisted submissions
 - Password-gated admin review page
 - Supabase database storage for registrations
-- Admin search, status filters, CSV export, and manual WhatsApp action
+- Admin search, status filters, CSV export, and status updates
 - Duplicate protection by phone number and Instagram name
 - Privacy notice on registration submission
 - Basic rate limiting on public registration submissions
-- Optional automated WhatsApp template messages through Meta WhatsApp Cloud API
+- Optional automated email messages through Gmail SMTP
 
 ## Next implementation steps
 - Create a Firebase App Hosting backend for the repository
 - Add production secrets and environment variables in Firebase App Hosting
-- Create and approve WhatsApp message templates in Meta Business Manager
-- Test production registration, admin login, status update, automated WhatsApp send, manual WhatsApp fallback, and CSV export
+- Configure Gmail SMTP environment variables
+- Test production registration, admin login, status update, automated email send, and CSV export
 - Add a fuller privacy/legal page if the event link will be shared broadly
 
 ## Environment
@@ -37,41 +36,26 @@ Next.js foundation for the Keller Party invitation experience, prepared for Fire
 - `SESSION_SECRET`: long random string used to sign admin session cookies. Falls back to `ADMIN_PASSWORD` if unset.
 - `SUPABASE_URL`: Supabase project URL.
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key used only on the server.
-- `WHATSAPP_ACCESS_TOKEN`: Meta WhatsApp Cloud API access token.
-- `WHATSAPP_PHONE_NUMBER_ID`: Meta WhatsApp phone number ID used to send messages.
-- `WHATSAPP_API_VERSION`: Meta Graph API version. Defaults to `v25.0`.
-- `WHATSAPP_DEFAULT_COUNTRY_CODE`: Country code used when guests enter local phone numbers. Defaults to `41`.
-- `WHATSAPP_TEMPLATE_LANGUAGE`: WhatsApp template language code. Defaults to `en_US`.
-- `WHATSAPP_REQUEST_TEMPLATE_NAME`: Template sent after a guest submits the request form.
-- `WHATSAPP_ACCEPTED_TEMPLATE_NAME`: Template sent when an admin accepts a guest.
-- `WHATSAPP_REJECTED_TEMPLATE_NAME`: Template sent when an admin rejects a guest.
+- `SMTP_HOST`: SMTP host. For Gmail, use `smtp.gmail.com`.
+- `SMTP_PORT`: SMTP port. For Gmail SSL, use `465`.
+- `SMTP_SECURE`: set to `true` for port `465`.
+- `SMTP_USER`: mailbox username, for example `kellerparty001@gmail.com`.
+- `SMTP_PASSWORD`: mailbox SMTP password. For Gmail this must be a Google App Password, not the normal account password.
+- `EMAIL_FROM`: sender address, for example `Keller Party <kellerparty001@gmail.com>`.
+- `EMAIL_REPLY_TO`: optional reply-to address.
 
-For Firebase App Hosting, keep secrets in Secret Manager and map them through [apphosting.yaml](/C:/Users/KingsleyChukwumezie/Projects/Keller_Party/apphosting.yaml). In this repo, `ADMIN_PASSWORD`, `SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `WHATSAPP_ACCESS_TOKEN`, and `WHATSAPP_PHONE_NUMBER_ID` are configured as secrets. The WhatsApp defaults and template names are checked into `apphosting.yaml` as regular environment values.
+For Firebase App Hosting, keep secrets in Secret Manager and map them through [apphosting.yaml](/C:/Users/KingsleyChukwumezie/Projects/Keller_Party/apphosting.yaml). In this repo, `ADMIN_PASSWORD`, `SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SMTP_USER`, `SMTP_PASSWORD`, and `EMAIL_FROM` are configured as secrets. `EMAIL_REPLY_TO` is optional and defaults to an empty value.
 
-## WhatsApp automation setup
-1. Create or connect a Meta Business account with WhatsApp Cloud API access.
-2. Add a WhatsApp sender phone number and copy its phone number ID.
-3. Create approved request-received, accepted, and rejected message templates matching the names in `.env.example`.
-4. Each current template should contain one body variable for the guest name, for example `{{1}}`.
-5. Add the WhatsApp environment variables locally and in production.
-6. Submit a test registration and accept it from `/admin`.
+## Email automation setup
+1. In the Gmail account, enable 2-Step Verification.
+2. Create a Google App Password for the app.
+3. Set `SMTP_USER=kellerparty001@gmail.com`.
+4. Set `SMTP_PASSWORD` to the Google App Password.
+5. Set `EMAIL_FROM="Keller Party <kellerparty001@gmail.com>"`.
+6. Optionally set `EMAIL_REPLY_TO` if replies should go to a different inbox.
+7. Submit a test registration and accept it from `/admin`.
 
-Suggested templates:
-- `keller_party_request_received`: `Hi {{1}}, your Keller Party access request has been received. We will review it shortly.`
-- `keller_party_access_approved`: `KELLER PARTY
-
-Hi {{1}},
-You have been selected.
-We look forward to welcoming you to the Icon Club Zurich on June 27.
-Please arrive promptly at 23:00.
-The dress code is Elegant and will be strictly enforced.
-Photography Prohibited.
-Videography Prohibited.
-Entry is 15 CHF and must be paid at the door by TWINT or card.
-This is a private event. Your invitation is personal and non-transferable.`
-- `keller_party_access_rejected`: `Hi {{1}}, thank you for your Keller Party attendance request. We are unable to approve this request.`
-
-The app copy for these templates lives in `lib/whatsapp-copy.js`. Keep the Meta template bodies matched to those strings.
+The app copy for these messages lives in `lib/email-copy.js`.
 
 ## Supabase setup
 1. Create a Supabase project.
@@ -96,11 +80,11 @@ This app uses Next.js App Router and server routes, so the correct Firebase targ
    - `SESSION_SECRET`
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
-   - `WHATSAPP_ACCESS_TOKEN`
-   - `WHATSAPP_PHONE_NUMBER_ID`
-8. If you want to change the WhatsApp defaults or template names, either edit `apphosting.yaml` or override them in the Firebase console.
-9. Run `supabase/schema.sql` in the production Supabase project.
-10. Trigger the first rollout and test `/request-access`, `/admin`, and WhatsApp template delivery.
+   - `SMTP_USER`
+   - `SMTP_PASSWORD`
+   - `EMAIL_FROM`
+8. Run `supabase/schema.sql` in the production Supabase project.
+9. Trigger the first rollout and test `/request-access`, `/admin`, and email delivery.
 
 ### Optional CLI path
 If you prefer local Firebase CLI deploys instead of GitHub-triggered rollouts:

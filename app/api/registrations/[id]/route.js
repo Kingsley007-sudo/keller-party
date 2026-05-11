@@ -11,7 +11,12 @@ import {
 import {
   sendRegistrationAcceptedMessage,
   sendRegistrationRejectedMessage
-} from "@/lib/whatsapp";
+} from "@/lib/email";
+
+const statusMessageSenders = {
+  accepted: sendRegistrationAcceptedMessage,
+  rejected: sendRegistrationRejectedMessage
+};
 
 export async function PATCH(request, { params }) {
   const sessionToken = cookies().get(adminSessionCookieName)?.value;
@@ -34,27 +39,34 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  let messageResult = null;
   const messageRecipient = result.guest
     ? {
         fullName: result.guest.fullName,
-        phoneNumber: result.guest.phoneNumber
+        email: result.guest.email
       }
     : result.registration;
-
-  if (payload?.status === "accepted") {
-    messageResult = await sendRegistrationAcceptedMessage(messageRecipient);
-  }
-
-  if (payload?.status === "rejected") {
-    messageResult = await sendRegistrationRejectedMessage(messageRecipient);
-  }
+  const sendStatusMessage = statusMessageSenders[payload?.status];
+  const messageResult = sendStatusMessage
+    ? await sendStatusMessage(messageRecipient)
+    : null;
 
   const responsePayload = { registration: result.registration };
 
   if (messageResult && !messageResult.ok) {
-    console.error("WhatsApp status message failed:", messageResult.error);
+    console.error("Status email failed:", messageResult.error);
     responsePayload.messageWarning = messageResult.error;
+  }
+
+  if (messageResult?.ok) {
+    console.info("Status email accepted:", {
+      messageId: messageResult.messageId
+    });
+
+    if (process.env.NODE_ENV !== "production") {
+      responsePayload.messageDebug = {
+        messageId: messageResult.messageId
+      };
+    }
   }
 
   return NextResponse.json(responsePayload);

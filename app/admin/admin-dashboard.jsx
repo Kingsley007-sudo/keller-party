@@ -3,10 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  buildAcceptedWhatsAppMessage,
-  buildRejectedWhatsAppMessage
-} from "@/lib/whatsapp-copy";
 
 const statusLabels = {
   pending: "Pending",
@@ -21,19 +17,19 @@ function formatDate(timestamp) {
   }).format(new Date(timestamp));
 }
 
-function getWhatsAppUrl(phoneNumber, message) {
-  const trimmedPhoneNumber = typeof phoneNumber === "string" ? phoneNumber.trim() : "";
-  const digits = trimmedPhoneNumber.replace(/[^\d]/g, "");
-  const normalizedPhoneNumber =
-    trimmedPhoneNumber.startsWith("+")
-      ? digits
-      : digits.startsWith("00")
-        ? digits.slice(2)
-        : digits.startsWith("0")
-          ? `41${digits.slice(1)}`
-          : digits;
+function shouldConfirmStatusChange(currentStatus, nextStatus) {
+  return (
+    currentStatus !== "pending" &&
+    nextStatus !== currentStatus &&
+    (nextStatus === "accepted" || nextStatus === "rejected")
+  );
+}
 
-  return `https://wa.me/${normalizedPhoneNumber}?text=${encodeURIComponent(message)}`;
+function getStatusChangeConfirmation(name, currentStatus, nextStatus) {
+  const currentLabel = statusLabels[currentStatus] || currentStatus;
+  const nextLabel = statusLabels[nextStatus] || nextStatus;
+
+  return `${name} is already ${currentLabel.toLowerCase()}. Changing to ${nextLabel.toLowerCase()} will send a new email. Continue?`;
 }
 
 function escapeCsvCell(value) {
@@ -96,11 +92,13 @@ export default function AdminDashboard({ initialRegistrations }) {
     const searchableText = [
       registration.fullName,
       registration.phoneNumber,
+      registration.email,
       registration.instagramName,
       registration.dateOfBirth,
       ...registration.guests.flatMap((guest) => [
         guest.fullName,
         guest.phoneNumber,
+        guest.email,
         guest.dateOfBirth,
         guest.instagramName,
         guest.status
@@ -120,6 +118,22 @@ export default function AdminDashboard({ initialRegistrations }) {
   }
 
   async function handleStatusChange(id, status) {
+    const registration = registrations.find((item) => item.id === id);
+
+    if (
+      registration &&
+      shouldConfirmStatusChange(registration.status, status) &&
+      !window.confirm(
+        getStatusChangeConfirmation(
+          registration.fullName,
+          registration.status,
+          status
+        )
+      )
+    ) {
+      return;
+    }
+
     setActiveId(id);
     setRequestError("");
 
@@ -149,6 +163,20 @@ export default function AdminDashboard({ initialRegistrations }) {
   }
 
   async function handleGuestStatusChange(id, guestIndex, status) {
+    const registration = registrations.find((item) => item.id === id);
+    const guest = registration?.guests?.[guestIndex];
+    const guestStatus = guest?.status || "pending";
+
+    if (
+      guest &&
+      shouldConfirmStatusChange(guestStatus, status) &&
+      !window.confirm(
+        getStatusChangeConfirmation(guest.fullName, guestStatus, status)
+      )
+    ) {
+      return;
+    }
+
     setActiveId(`${id}:guest:${guestIndex}`);
     setRequestError("");
 
@@ -182,12 +210,14 @@ export default function AdminDashboard({ initialRegistrations }) {
       [
         "Full name",
         "Phone number",
+        "Email",
         "Date of birth",
         "Instagram",
         "Status",
         "Bringing guests",
         "Guest name",
         "Guest phone",
+        "Guest email",
         "Guest date of birth",
         "Guest Instagram",
         "Guest status",
@@ -198,6 +228,7 @@ export default function AdminDashboard({ initialRegistrations }) {
         const baseRow = [
           registration.fullName,
           registration.phoneNumber,
+          registration.email,
           registration.dateOfBirth,
           registration.instagramName,
           statusLabels[registration.status],
@@ -205,13 +236,14 @@ export default function AdminDashboard({ initialRegistrations }) {
         ];
 
         if (registration.guests.length === 0) {
-          return [[...baseRow, "", "", "", "", "", registration.createdAt, registration.updatedAt]];
+          return [[...baseRow, "", "", "", "", "", "", registration.createdAt, registration.updatedAt]];
         }
 
         return registration.guests.map((guest) => [
           ...baseRow,
           guest.fullName,
           guest.phoneNumber,
+          guest.email,
           guest.dateOfBirth,
           guest.instagramName,
           statusLabels[guest.status || "pending"],
@@ -288,7 +320,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                 type="search"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Name, phone, Instagram..."
+                placeholder="Name, email, phone, Instagram..."
               />
             </label>
 
@@ -337,16 +369,11 @@ export default function AdminDashboard({ initialRegistrations }) {
                       <th scope="col">Submitted</th>
                       <th scope="col">Status</th>
                       <th scope="col">Actions</th>
-                      <th scope="col">Fallback</th>
                     </tr>
                   </thead>
                   <tbody>
                     {visibleRegistrations.map((registration) => {
                       const guestCount = registration.guests.length;
-                      const fallbackMessage =
-                        registration.status === "accepted"
-                          ? buildAcceptedWhatsAppMessage(registration.fullName)
-                          : buildRejectedWhatsAppMessage(registration.fullName);
 
                       return (
                         <tr key={registration.id}>
@@ -357,9 +384,14 @@ export default function AdminDashboard({ initialRegistrations }) {
                             </div>
                           </td>
                           <td>
-                            <a href={`tel:${registration.phoneNumber}`}>
-                              {registration.phoneNumber}
-                            </a>
+                            <div className="table-primary-cell">
+                              <a href={`mailto:${registration.email}`}>
+                                {registration.email}
+                              </a>
+                              <a href={`tel:${registration.phoneNumber}`}>
+                                {registration.phoneNumber}
+                              </a>
+                            </div>
                           </td>
                           <td>{registration.dateOfBirth}</td>
                           <td>
@@ -370,10 +402,6 @@ export default function AdminDashboard({ initialRegistrations }) {
                                   {registration.guests.map((guest, guestIndex) => {
                                     const guestStatus = guest.status || "pending";
                                     const guestActiveId = `${registration.id}:guest:${guestIndex}`;
-                                    const guestFallbackMessage =
-                                      guestStatus === "accepted"
-                                        ? buildAcceptedWhatsAppMessage(guest.fullName)
-                                        : buildRejectedWhatsAppMessage(guest.fullName);
 
                                     return (
                                       <div
@@ -383,6 +411,7 @@ export default function AdminDashboard({ initialRegistrations }) {
                                         <div className="guest-decision-main">
                                           <strong>{guest.fullName}</strong>
                                           <span>{guest.instagramName}</span>
+                                          <span>{guest.email}</span>
                                           <span>{guest.phoneNumber}</span>
                                           <span>{guest.dateOfBirth}</span>
                                           <span className={`status-badge status-${guestStatus}`}>
@@ -393,7 +422,10 @@ export default function AdminDashboard({ initialRegistrations }) {
                                           <button
                                             type="button"
                                             className="compact-button compact-button-accept"
-                                            disabled={activeId === guestActiveId}
+                                            disabled={
+                                              activeId === guestActiveId ||
+                                              guestStatus === "accepted"
+                                            }
                                             onClick={() =>
                                               handleGuestStatusChange(
                                                 registration.id,
@@ -407,7 +439,10 @@ export default function AdminDashboard({ initialRegistrations }) {
                                           <button
                                             type="button"
                                             className="compact-button compact-button-reject"
-                                            disabled={activeId === guestActiveId}
+                                            disabled={
+                                              activeId === guestActiveId ||
+                                              guestStatus === "rejected"
+                                            }
                                             onClick={() =>
                                               handleGuestStatusChange(
                                                 registration.id,
@@ -418,20 +453,6 @@ export default function AdminDashboard({ initialRegistrations }) {
                                           >
                                             Reject
                                           </button>
-                                          {guestStatus === "accepted" ||
-                                          guestStatus === "rejected" ? (
-                                            <a
-                                              className="compact-button compact-button-message button-link"
-                                              href={getWhatsAppUrl(
-                                                guest.phoneNumber,
-                                                guestFallbackMessage
-                                              )}
-                                              target="_blank"
-                                              rel="noreferrer"
-                                            >
-                                              Resend
-                                            </a>
-                                          ) : null}
                                         </div>
                                       </div>
                                     );
@@ -453,7 +474,10 @@ export default function AdminDashboard({ initialRegistrations }) {
                               <button
                                 type="button"
                                 className="compact-button compact-button-accept"
-                                disabled={activeId === registration.id}
+                                disabled={
+                                  activeId === registration.id ||
+                                  registration.status === "accepted"
+                                }
                                 onClick={() => handleStatusChange(registration.id, "accepted")}
                               >
                                 Accept
@@ -461,30 +485,15 @@ export default function AdminDashboard({ initialRegistrations }) {
                               <button
                                 type="button"
                                 className="compact-button compact-button-reject"
-                                disabled={activeId === registration.id}
+                                disabled={
+                                  activeId === registration.id ||
+                                  registration.status === "rejected"
+                                }
                                 onClick={() => handleStatusChange(registration.id, "rejected")}
                               >
                                 Reject
                               </button>
                             </div>
-                          </td>
-                          <td>
-                            {registration.status === "accepted" ||
-                            registration.status === "rejected" ? (
-                              <a
-                                className="compact-button compact-button-message button-link"
-                                href={getWhatsAppUrl(
-                                  registration.phoneNumber,
-                                  fallbackMessage
-                                )}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
-                                Manual resend
-                              </a>
-                            ) : (
-                              <span className="muted-table-text">Decide first</span>
-                            )}
                           </td>
                         </tr>
                       );

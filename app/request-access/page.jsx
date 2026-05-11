@@ -6,6 +6,7 @@ import { startTransition, useState } from "react";
 const initialForm = {
   fullName: "",
   phoneNumber: "",
+  email: "",
   dateOfBirth: "",
   instagramName: "",
   bringingGuests: "",
@@ -27,7 +28,7 @@ export default function RequestAccessPage() {
         ...current,
         bringingGuests: value,
         guests: value === "yes" && current.guests.length === 0
-          ? [{ fullName: "", phoneNumber: "", dateOfBirth: "", instagramName: "" }]
+          ? [{ fullName: "", phoneNumber: "", email: "", dateOfBirth: "", instagramName: "" }]
           : value === "no"
             ? []
             : current.guests
@@ -70,6 +71,10 @@ export default function RequestAccessPage() {
       nextErrors.phoneNumber = "Phone number is required.";
     }
 
+    if (!formData.email.trim()) {
+      nextErrors.email = "Email address is required.";
+    }
+
     if (!formData.dateOfBirth) {
       nextErrors.dateOfBirth = "Date of birth is required.";
     }
@@ -92,6 +97,10 @@ export default function RequestAccessPage() {
 
         if (!guest.phoneNumber.trim()) {
           nextGuestErrors.phoneNumber = "Guest phone number is required.";
+        }
+
+        if (!guest.email.trim()) {
+          nextGuestErrors.email = "Guest email address is required.";
         }
 
         if (!guest.dateOfBirth) {
@@ -157,7 +166,7 @@ export default function RequestAccessPage() {
       ...current,
       guests: [
         ...current.guests,
-        { fullName: "", phoneNumber: "", dateOfBirth: "", instagramName: "" }
+        { fullName: "", phoneNumber: "", email: "", dateOfBirth: "", instagramName: "" }
       ]
     }));
   }
@@ -216,7 +225,10 @@ export default function RequestAccessPage() {
     if (!response.ok) {
       setIsSubmitting(false);
       setErrors(payload.errors || {});
-      setSubmissionError("Your request could not be submitted. Please review the form and try again.");
+      setSubmissionError(
+        payload.errors?.form ||
+          "Your request could not be submitted. Please review the form and try again."
+      );
       return;
     }
 
@@ -273,7 +285,7 @@ export default function RequestAccessPage() {
               <p className="flow-label">Submission received</p>
               <h3>Your request is in review.</h3>
               <p className="flow-intro">
-                You will receive your invitation decision by WhatsApp no later
+                You will receive your invitation decision by email no later
                 than two weeks before the party.
               </p>
             </div>
@@ -311,6 +323,20 @@ export default function RequestAccessPage() {
                 />
                 {errors.phoneNumber ? (
                   <span className="field-error">{errors.phoneNumber}</span>
+                ) : null}
+              </label>
+
+              <label className="field">
+                <span>Email address</span>
+                <input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                />
+                {errors.email ? (
+                  <span className="field-error">{errors.email}</span>
                 ) : null}
               </label>
 
@@ -422,6 +448,23 @@ export default function RequestAccessPage() {
                       </label>
 
                       <label className="field">
+                        <span>Guest email address</span>
+                        <input
+                          type="email"
+                          value={guest.email}
+                          onChange={(event) =>
+                            handleGuestChange(index, "email", event.target.value)
+                          }
+                          placeholder="guest@example.com"
+                        />
+                        {errors.guests?.[index]?.email ? (
+                          <span className="field-error">
+                            {errors.guests[index].email}
+                          </span>
+                        ) : null}
+                      </label>
+
+                      <label className="field">
                         <span>Guest date of birth</span>
                         <input
                           type="date"
@@ -472,7 +515,7 @@ export default function RequestAccessPage() {
 
               <p className="privacy-note">
                 By submitting this request, you agree that Keller Party may store
-                your registration details and use your phone number or Instagram
+                your registration details and use your email address, phone number, or Instagram
                 name to review access and contact you about this private event.
                 Entry is 15 CHF and must be paid at the door by TWINT or card.
                 {" "}

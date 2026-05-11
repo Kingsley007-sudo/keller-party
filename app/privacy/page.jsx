@@ -3,7 +3,7 @@ import Link from "next/link";
 const privacySections = [
   {
     title: "What we collect",
-    body: "When you request access, Keller Party stores your full name, phone number, date of birth, Instagram name, guest details if provided, submission time, and review status."
+    body: "When you request access, Keller Party stores your full name, email address, phone number, date of birth, Instagram name, guest details if provided, submission time, and review status."
   },
   {
     title: "Why we collect it",
@@ -18,8 +18,8 @@ const privacySections = [
     body: "Registration data should be deleted after the event is complete and no longer needed for guest-list operations."
   },
   {
-    title: "WhatsApp contact",
-    body: "If your request is accepted, the team may contact you manually via WhatsApp using the phone number you submitted."
+    title: "Email contact",
+    body: "The team may email you about your request using the email address you submitted."
   }
 ];
 

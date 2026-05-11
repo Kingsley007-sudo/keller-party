@@ -3,6 +3,7 @@ create table if not exists public.registrations (
   full_name text not null,
   phone_number text not null,
   phone_number_normalized text,
+  email text not null,
   date_of_birth date not null,
   instagram_name text not null,
   instagram_name_normalized text,
@@ -24,6 +25,9 @@ alter table public.registrations
 
 alter table public.registrations
   add column if not exists instagram_name_normalized text;
+
+alter table public.registrations
+  add column if not exists email text;
 
 update public.registrations
 set
